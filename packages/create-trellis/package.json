@@ -1,0 +1,12 @@
+{
+	"name": "@wnuspl/create-trellis",
+	"version": "0.1.0",
+	"type": "module",
+	"bin": {
+		"create-trellis": "./bin/index.js"
+	},
+	"files": [
+		"bin",
+		"template"
+	]
+}

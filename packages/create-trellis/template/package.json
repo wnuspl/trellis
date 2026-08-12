@@ -1,0 +1,21 @@
+{
+  "name": "trellis-template",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "file-server": "npx file-server",
+    "dev": "npx vite"
+  },
+  "dependencies": {
+    "@wnuspl/trellis": "^0.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.5.3",
+    "vite": "^8.1.0"
+  },
+  "private": true
+}

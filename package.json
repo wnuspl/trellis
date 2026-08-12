@@ -1,0 +1,7 @@
+{
+	"name": "trellis-monorepo",
+	"private": true,
+	"workspaces": [
+		"packages/*"
+	]
+}

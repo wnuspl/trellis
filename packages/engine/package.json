@@ -1,0 +1,42 @@
+{
+  "name": "@wnuspl/trellis",
+  "version": "0.1.0",
+  "description": "",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./stl": {
+      "types": "./dist/stl/index.d.ts",
+      "import": "./dist/stl/index.js"
+    },
+    "./editor": {
+      "types": "./dist/editor/index.d.ts",
+      "import": "./dist/editor/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepare": "npm run build",
+    "dev": "npx tsc --watch"
+  },
+  "bin": {
+    "file-server": "./bin/file-server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "pixi.js": "^8.19.0"
+  }
+}
