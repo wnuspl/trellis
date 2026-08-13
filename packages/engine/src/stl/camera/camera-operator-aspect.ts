@@ -4,18 +4,14 @@ import {Vector2} from "../../utils/index.js";
 
 export class CameraOperator extends Aspect {
     #camera: Camera;
+    position: Vector2;
     constructor(args?: { position?: Vector2, zoom?: number }) {
         super();
-        this.#camera = new Camera(args?.position ?? new Vector2(0,0), args?.zoom ?? 1);
+        this.#camera = new Camera(new Vector2(0,0), args?.zoom ?? 1);
+        this.position = args?.position ?? new Vector2(0,0);
     }
     get camera(): Camera {
         return this.#camera;
-    }
-    set position(position: Vector2) {
-        this.#camera.position = position;
-    }
-    get position() {
-        return this.#camera.position
     }
     set zoom(zoom: number) {
         this.#camera.zoom = zoom;

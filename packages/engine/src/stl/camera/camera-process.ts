@@ -1,15 +1,16 @@
 import {Process} from "../../model/index.js";
 import type {InstanceContext} from "../../instance/index.js";
 import {CameraOperator} from "./camera-operator-aspect.js";
+import {Transform} from "../../core/index.js";
 
 export class CameraProcess extends Process {
     update(ctx: InstanceContext) {
-        const oldCamera = this.application.camera;
         const candidates = ctx.scene.query([CameraOperator]);
         if (candidates.length == 0) return;
-        const newCamera = candidates[0]!.get(CameraOperator)!.camera;
-        if (oldCamera !== newCamera) {
-            this.application.camera = newCamera;
-        }
+        const target = candidates[0]!;
+        const cameraOperator = target.get(CameraOperator)!;
+        this.application.camera = cameraOperator.camera;
+        this.application.camera.position = target.get(Transform).worldPosition.plus(cameraOperator.position);
+        this.application.syncCamera();
     }
 }

@@ -15,10 +15,10 @@ export class GameProfile extends Profile {
         instance.registerProcess(CreateProcess);
         instance.registerProcess(PhysicsProcess);
         instance.registerProcess(TransformProcess);
+        instance.registerProcess(CameraProcess)
         instance.registerProcess(SpriteAnimationProcess);
         instance.registerProcess(SpriteRenderProcess);
         instance.registerProcess(OnclickProcess);
-        instance.registerProcess(CameraProcess)
         await super.init();
     }
 }

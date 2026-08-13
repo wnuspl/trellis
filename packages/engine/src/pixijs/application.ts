@@ -26,7 +26,6 @@ export class PixiApplication {
             this.#app.stage.addChild(this.#world);
         } finally {
             this.#isInitializing = false;
-            this.onTick(this.syncCamera.bind(this));
         }
     }
     syncCamera() {
