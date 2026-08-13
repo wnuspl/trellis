@@ -65,6 +65,7 @@ export class Instance {
 
         input.init(mount);
 
+        application.backgroundColor = this.config.backgroundColor;
 
         await application.init(mount);
         application.onTick(this.#updateGlobal.bind(this));

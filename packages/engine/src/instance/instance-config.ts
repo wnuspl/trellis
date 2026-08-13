@@ -1,7 +1,9 @@
 export type InstanceConfig = {
-    assetFileNameList: string[]
+    assetFileNameList: string[],
+    backgroundColor: string,
 };
 
 export const DefaultInstanceConfig = {
-    assetFileNameList: ['/src/assets/monkey.png']
+    assetFileNameList: [],
+    backgroundColor: "#20202e",
 };

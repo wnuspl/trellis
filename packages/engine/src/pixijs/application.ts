@@ -7,6 +7,7 @@ export class PixiApplication {
     #app: Application<Renderer> | null;
     #world: Container;
     camera: Camera;
+    backgroundColor: string = "#4e4e5e";
     #isInitializing: boolean;
     constructor() {
         this.#app = null;
@@ -20,7 +21,7 @@ export class PixiApplication {
         try {
             this.#isInitializing = true;
             this.#app = new Application();
-            await this.#app.init({ background: '#1099bb', resizeTo: mount });
+            await this.#app.init({ background: this.backgroundColor, resizeTo: mount });
             mount.appendChild(this.#app.canvas);
             this.#app.stage.addChild(this.#world);
         } finally {
