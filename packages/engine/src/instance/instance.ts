@@ -10,6 +10,7 @@ import {FrameRequestStore} from "../requests.js";
 import {MutableFrameChanges} from "../model/index.js";
 import {Scene} from "../model/scene.js";
 import {SceneManager} from "./scene-manager.js";
+import {CollisionEvent} from "../stl/index.js";
 
 
 export class Instance {
@@ -88,7 +89,6 @@ export class Instance {
             scene: this.#systems.sceneManager.current,
         }
         this.#context.scene = this.#systems.sceneManager.current;
-        this.#context.events.clear();
 
         this.#updateProcesses(this.#context);
 
@@ -99,6 +99,8 @@ export class Instance {
         this.#context.camera = this.#systems.application.camera;
 
         this.#updateBehaviors(this.#context);
+        this.#context.events.clear();
+
     }
     #updateProcesses(ctx: InstanceContext) {
         for (const process of this.processes.values()) {
