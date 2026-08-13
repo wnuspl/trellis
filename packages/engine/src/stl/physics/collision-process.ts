@@ -35,6 +35,11 @@ export class CollisionEvent extends FrameEvent {
         }
         return this;
     }
+    static each(target: GameObject, ctx: InstanceContext, action: (other: GameObject) => void) {
+        for (const collisionEvent of ctx.events.getFor(CollisionEvent, target)) {
+            action(collisionEvent.b);
+        }
+    }
 }
 
 export class CollisionProcess extends Process {
