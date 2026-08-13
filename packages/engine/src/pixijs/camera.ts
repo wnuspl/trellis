@@ -1,10 +1,10 @@
 import {Vector2} from "../utils/index.js";
 
 export class Camera {
-    #position!: Vector2;
+    #position: Vector2;
     zoom: number;
     constructor(position?: Vector2, zoom?: number) {
-        this.position = position ?? new Vector2(0,0);
+        this.#position = position ?? new Vector2(0,0);
         this.zoom = zoom ?? 1;
     }
     get position() {

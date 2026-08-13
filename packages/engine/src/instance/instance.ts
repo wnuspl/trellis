@@ -15,12 +15,12 @@ import {CollisionEvent} from "../stl/index.js";
 
 export class Instance {
     #processes: Map<ProcessConstructor, Process>;
-    #config: InstanceConfig
+    config: InstanceConfig
     #systems: InstanceSystems;
     #registry: Registry;
     #context: InstanceContext;
     constructor(config: InstanceConfig = DefaultInstanceConfig) {
-        this.#config = config;
+        this.config = config;
         this.#registry = new Registry();
         this.#systems = {
             application: new PixiApplication(),
@@ -43,9 +43,6 @@ export class Instance {
     get registry() {
         return this.#registry;
     }
-    get config() {
-        return this.#config;
-    }
     get context() {
         return this.#context;
     }
@@ -60,7 +57,7 @@ export class Instance {
         const application = this.#systems.application;
         const input = this.#context.input;
 
-        await assetManager.registerAssetFiles(this.#config.assetFileNameList);
+        await assetManager.registerAssetFiles(this.config.assetFileNameList);
         await assetManager.load();
 
         input.init(mount);

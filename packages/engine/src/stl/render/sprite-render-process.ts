@@ -24,7 +24,7 @@ export class SpriteRenderProcess extends Process {
         let sprite;
         if (!this.#spriteCache.has(gameObject)) {
             const texture = this.assetManager.get(textureAlias);
-            sprite = new WorldSprite(texture);
+            sprite = new WorldSprite(texture, spriteRenderer.z);
             this.#spriteCache.set(gameObject, sprite);
             this.application.add(sprite);
         } else {

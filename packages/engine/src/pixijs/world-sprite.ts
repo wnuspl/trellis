@@ -4,8 +4,9 @@ import {Transform} from "../core/index.js";
 
 export class WorldSprite {
     #sprite: Sprite;
-    constructor(texture: any) {
+    constructor(texture: any, z: number) {
         this.#sprite = new Sprite(texture);
+        this.#sprite.zIndex = z;
         this.#sprite.anchor.set(0.5,0.5);
     }
     set position(position: Vector2) {
