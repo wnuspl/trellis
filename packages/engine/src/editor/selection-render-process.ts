@@ -1,4 +1,4 @@
-import {GameObject, Process, type ProcessContext} from "../model/index.js";
+import {GameObject, Process, type ProcessConfig} from "../model/index.js";
 import type {EditorContext} from "./editor-context.js";
 import type {InstanceContext} from "../instance/index.js";
 import {AABBCollider, CircleCollider, Collider, OnclickEvent} from "../stl/index.js";
@@ -9,7 +9,7 @@ export class SelectionRenderProcess extends Process {
     editorCtx: EditorContext;
     cachedGameObject: GameObject | null = null;
     graphics: WorldGraphics | null = null;
-    constructor(processContext: ProcessContext, config: { editorContext: EditorContext }) {
+    constructor(processContext: ProcessConfig, config: { editorContext: EditorContext }) {
         super(processContext);
         this.editorCtx = config.editorContext;
     }

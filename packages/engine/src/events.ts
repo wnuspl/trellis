@@ -1,5 +1,7 @@
 import {Uuid} from "./utils/index.js";
 import type {GameObject} from "./model/game-object.js";
+import type {BehaviorContext} from "./model/behavior.js";
+import type {ProcessContext} from "./model/process.js";
 
 type Constructor<T> = new(...args: any[]) => T;
 export class FrameEventStore {
@@ -30,7 +32,7 @@ export class FrameEventStore {
     }
 }
 
-export type FrameEventStoreView = {
+export type ReadonlyFrameEventStore = {
     get: <T extends FrameEvent>(key: Constructor<T>) => T[];
     getFor: <T extends FrameEvent>(key: Constructor<T>, gameObject: GameObject) => T[];
 }
@@ -44,5 +46,8 @@ export class FrameEvent {
     }
     for(gameObject: GameObject): FrameEvent {
         return this;
+    }
+    post(ctx: ProcessContext) {
+        ctx.events.post(this);
     }
 }

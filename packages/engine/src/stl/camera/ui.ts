@@ -1,11 +1,11 @@
-import {Behavior} from "../../model/behavior.js";
+import {Behavior, type BehaviorContext} from "../../model/behavior.js";
 import type {InstanceContext} from "../../instance/index.js";
 import {CameraOperator} from "./camera-operator-aspect.js";
 import {Transform} from "../../core/index.js";
 import {Vector2} from "../../utils/index.js";
 
 export class UIParentBehavior extends Behavior {
-    update(ctx: InstanceContext) {
+    update(ctx: BehaviorContext) {
         const camera = ctx.camera;
 
         this.gameObject.get(Transform).position = camera.position;

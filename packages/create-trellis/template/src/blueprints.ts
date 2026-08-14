@@ -48,28 +48,13 @@ class PlayerController extends Behavior {
         if (ctx.input.isKeyHeld("KeyD")) direction.x += 1;
         if (ctx.input.isKeyHeld("KeyW")) direction.y += 1;
         if (ctx.input.isKeyHeld("KeyS")) direction.y -= 1;
+        this.gameObject.get(PhysicsBody)!.velocity = direction.normalized().scaled(this.speed);
 
+        const spriteAnimation = this.gameObject.get(SpriteAnimation)!;
+        const spriteRenderer = this.gameObject.get(SpriteRenderer)!;
 
-        this.gameObject.modify(SpriteAnimation, spriteAnimation => {
-            const previousVelocity = this.gameObject.get(PhysicsBody)!.velocity;
-            if (direction.magnitude() > 0) {
-                if (previousVelocity.magnitude() == 0) {
-                    spriteAnimation.currentAnimation = "run";
-                }
-            } else {
-                spriteAnimation.currentAnimation = "idle";
-            }
-        });
-
-        this.gameObject.modify(PhysicsBody, physicsBody => {
-            physicsBody.velocity = direction.normalized().scaled(this.speed * ctx.dt);
-        });
-
-        if (direction.x != 0) {
-            this.gameObject.modify(SpriteRenderer, spriteRenderer => {
-                spriteRenderer.scale.x = Math.abs(spriteRenderer.scale.x) * direction.x;
-            });
-        }
+        spriteAnimation.currentAnimation = (direction.magnitude() > 0) ? "run" : "idle";
+        direction.x != 0 && (spriteRenderer.scale.x = Math.abs(spriteRenderer.scale.x) * direction.x);
     }
 }
 
@@ -85,14 +70,11 @@ export const Watermelon = new Blueprint(
 
         gameObject.attach(class extends Behavior {
             update(ctx: InstanceContext) {
+                const transform = this.gameObject.get(Transform);
                 if (OnclickEvent.wasClicked(this.gameObject, ctx, "left")) {
-                    this.gameObject.modify(Transform, (transform) => {
-                        transform.position = new Vector2(Math.random()*1000-500, Math.random()*600-300)
-                    });
+                    transform.position = new Vector2(Math.random()*1000-500, Math.random()*600-300)
                 }
-                this.gameObject.modify(Transform, (transform) => {
-                    transform.rotation += ctx.dt * 0.05;
-                });
+                transform.rotation += ctx.dt * 0.05;
             }
         })
     }

@@ -1,11 +1,11 @@
-import {Process, type ProcessContext} from "../model/index.js";
+import {Process, type ProcessConfig} from "../model/index.js";
 import type {EditorContext} from "./editor-context.js";
 import type {InstanceContext} from "../instance/index.js";
 
 export class GameObjectBuildProcess extends Process {
     editorCtx: EditorContext;
     aliasMap: Map<number, string> = new Map();
-    constructor(processContext: ProcessContext, config: { editorContext: EditorContext }) {
+    constructor(processContext: ProcessConfig, config: { editorContext: EditorContext }) {
         super(processContext);
         this.editorCtx = config.editorContext;
         console.log(`TO ADD OBJECTS, USE NUMBER KEYS\n${

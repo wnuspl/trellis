@@ -4,8 +4,6 @@ As of 8.14
 
 # misc
 - Fix physics bug (falling through floor)
-- Scene abstraction (don't let behaviors modify)
-- Make interfaces for events and requests
 - Documentation! All of it I don't know what's going on
 - More usable frame changes objectt
 

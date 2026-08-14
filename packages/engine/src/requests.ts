@@ -1,4 +1,5 @@
 import type {InstanceContext} from "./instance/instance-context.js";
+import type {BehaviorContext} from "./model/behavior.js";
 
 type Constructor<T> = new(...args: any[]) => T;
 export class FrameRequestStore {
@@ -23,7 +24,11 @@ export class FrameRequestStore {
 }
 
 export class FrameRequest {
-    post(ctx: InstanceContext) {
+    post(ctx: BehaviorContext) {
         ctx.requests.post(this);
     }
+}
+
+export type ReadonlyFrameRequestStore = {
+    get<T extends FrameRequest>(key: Constructor<T>): T[];
 }

@@ -91,3 +91,8 @@ export class Scene {
         return this.#root;
     }
 }
+
+export type ReadonlyScene = {
+    query(typeArray: AspectConstructor[]): GameObject[];
+    getChildren(parent: GameObject): Set<GameObject>;
+}
