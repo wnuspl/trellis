@@ -1,7 +1,12 @@
 {
   "name": "@wnuspl/trellis",
   "version": "0.1.0",
-  "description": "",
+  "description": "2D game engine designed for integration with familiar practice.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wnuspl/trellis"
+  },
+  "homepage": "https://github.com/wnuspl/trellis/#readme",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

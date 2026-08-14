@@ -8,9 +8,8 @@ As of 8.14
 - More usable frame changes objectt
 
 ## tracking
-- Implement tracking for transform process
+- Implement tracking for transform process (frame changes first)
 - Implement better tracking for sprite render process
-- Look at other features that could use tracking (tags)
 
 ## editor
 - Drag and drop
