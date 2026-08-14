@@ -1,9 +1,22 @@
 # todo
 
-As of 8.13
+As of 8.14
 
-- Detect onclick for sprites (mainly for map editor)
-- Camera follows gameobject position
+# misc
 - Fix physics bug (falling through floor)
 - Scene abstraction (don't let behaviors modify)
+- Make interfaces for events and requests
 - Documentation! All of it I don't know what's going on
+- More usable frame changes objectt
+
+## tracking
+- Implement tracking for transform process
+- Implement better tracking for sprite render process
+- Look at other features that could use tracking (tags)
+
+## editor
+- Drag and drop
+- Snapping to grid
+- Click on sprite, not collider
+- Delete gameobject
+- Eventually, add children? this is bad bad news
