@@ -7,9 +7,9 @@ import { Tags } from "../core/tags.js";
 import { Transform} from "../core/transform.js";
 
 type GetAspectMethod = {
-    (type: typeof Transform): Readonly<Transform>;
-    (type: typeof Tags): Readonly<Tags>;
-    <T extends Aspect>(type: AspectConstructor<T>): Readonly<T> | undefined;
+    (type: typeof Transform): Transform;
+    (type: typeof Tags): Tags;
+    <T extends Aspect>(type: AspectConstructor<T>): T | undefined;
 };
 type AttachBehaviorMethod = {
     <T extends Behavior>(
@@ -36,9 +36,6 @@ export class GameObject {
     public readonly get: GetAspectMethod= ((aspect: AspectConstructor) => {
         return this.#registry.getAspect(this, aspect);
     }) as GetAspectMethod;
-    public readonly modify = <T extends Aspect>(type: AspectConstructor<T>, modifier: (aspect: T) => void) => {
-        this.#registry.modifyAspect(this, type, modifier);
-    }
     public readonly add = <T extends Aspect>(aspect: T): this => {
         this.#registry.addAspect(this, aspect);
         return this;

@@ -30,8 +30,8 @@ export class SpriteRenderProcess extends Process {
         } else {
             sprite = this.#spriteCache.get(gameObject)!;
             const modifiedAspects = ctx.changes.modifiedGameObjects.get(gameObject) ?? [];
-            const modifiedTexture = modifiedAspects.filter(aspect => aspect === SpriteRenderer)[0];
-            if (modifiedTexture) {
+            const modified = modifiedAspects.filter(aspect => aspect === SpriteRenderer)[0];
+            if (modified) {
                 sprite.texture = spriteRenderer.textureAlias;
             }
         }

@@ -23,15 +23,14 @@ export class SelectionEditProcess extends Process {
         if (ctx.input.isKeyHeld("KeyD")) direction.x += 1;
         if (ctx.input.isKeyHeld("KeyW")) direction.y += 1;
         if (ctx.input.isKeyHeld("KeyS")) direction.y += -1;
-        this.editorCtx.selected.modify(Transform, (transform) => {
-            if (this.editorCtx.mode === "position") {
-                const movement = direction.normalized().scaled(1.5*ctx.dt);
-                transform.position.add(movement);
-            }
-            if (this.editorCtx.mode === "scale") {
-                const movement = direction.normalized().scaled(0.05*ctx.dt);
-                transform.scale.add(movement);
-            }
-        });
+        const transform = this.editorCtx.selected.get(Transform);
+        if (this.editorCtx.mode === "position") {
+            const movement = direction.normalized().scaled(1.5*ctx.dt);
+            transform.position.add(movement);
+        }
+        if (this.editorCtx.mode === "scale") {
+            const movement = direction.normalized().scaled(0.05*ctx.dt);
+            transform.scale.add(movement);
+        }
     }
 }

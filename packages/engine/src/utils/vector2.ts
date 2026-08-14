@@ -1,8 +1,25 @@
-export type Vector2Unserialized = { x: number; y: number };
+export type Vector2Unserialized = { _x: number; _y: number };
 export class Vector2 {
-    constructor(public x: number, public y: number) {}
+    protected _x: number;
+    protected _y: number;
+    get x(): number {
+        return this._x;
+    }
+    set x(value: number) {
+        this._x = value;
+    }
+    get y(): number {
+        return this._y;
+    }
+    set y(value: number) {
+        this._y = value;
+    }
+    constructor(x: number, y: number) {
+        this._x = x;
+        this._y = y;
+    }
     static from(data: Vector2Unserialized): Vector2 {
-        return new Vector2(data.x, data.y);
+        return new Vector2(data._x, data._y);
     }
     plus(other: Vector2) {
         return new Vector2(this.x+other.x, this.y+other.y);
@@ -23,6 +40,9 @@ export class Vector2 {
     }
     dot(other: Vector2) {
         return this.x*other.x + this.y*other.y;
+    }
+    equals(other: Vector2) {
+        return this.x == other.x && this.y == other.y;
     }
 
 

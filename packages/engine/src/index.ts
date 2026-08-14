@@ -7,6 +7,7 @@ export * from './instance/index.js';
 
 export * from "./events.js";
 export * from "./requests.js";
+export * from "./tracked.js";
 
 
 export * from './core/index.js';

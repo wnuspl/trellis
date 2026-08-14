@@ -15,9 +15,7 @@ export class DynamicsProcess extends Process {
             const dv = physicsBody.gravityScale*DynamicsProcess.GRAVITY_ACCELERATION*ctx.dt;
             physicsBody.velocity.y += dv;
 
-            gameObject.modify(Transform, (transform) => {
-                transform.position.add(physicsBody.velocity.scaled(ctx.dt));
-            })
+            transform.position.add(physicsBody.velocity.scaled(ctx.dt));
         }
     }
 

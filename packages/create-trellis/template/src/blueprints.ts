@@ -8,19 +8,32 @@ import {
 import {
     CircleCollider,
     Collider, CollisionEvent, OnclickEvent,
-    PhysicsBody,
+    PhysicsBody, SpriteAnimation,
     SpriteRenderer
 } from "@wnuspl/trellis/stl";
 
 
+const PlayerAnimations = {
+    "run": {
+        frames: ["bunny-run-2.png","bunny-run-3.png","bunny-run-4.png","bunny-run-5.png"],
+        frameDuration: 12,
+        loop: true
+    },
+    "idle": {
+        frames: ["bunny-run-1.png"],
+        frameDuration: 1,
+        loop: false
+    }
+}
 
 export const Player = new Blueprint(
     (gameObject) => {
         gameObject.attach(PlayerController)
         gameObject
+            .add(new SpriteAnimation(PlayerAnimations, "run"))
             .add(new SpriteRenderer({
-                textureAlias: "player.png",
-                scale: new Vector2(0.5,0.5)
+                textureAlias: "bunny-run-1.png",
+                scale: new Vector2(2,2)
             }))
             .add(new Collider(new CircleCollider(64)))
             .add(new PhysicsBody({ gravityScale: 0 }))
@@ -30,14 +43,33 @@ export const Player = new Blueprint(
 class PlayerController extends Behavior {
     speed: number = 5;
     update(ctx: InstanceContext) {
+        const direction  = new Vector2(0,0);
+        if (ctx.input.isKeyHeld("KeyA")) direction.x += -1;
+        if (ctx.input.isKeyHeld("KeyD")) direction.x += 1;
+        if (ctx.input.isKeyHeld("KeyW")) direction.y += 1;
+        if (ctx.input.isKeyHeld("KeyS")) direction.y -= 1;
+
+
+        this.gameObject.modify(SpriteAnimation, spriteAnimation => {
+            const previousVelocity = this.gameObject.get(PhysicsBody)!.velocity;
+            if (direction.magnitude() > 0) {
+                if (previousVelocity.magnitude() == 0) {
+                    spriteAnimation.currentAnimation = "run";
+                }
+            } else {
+                spriteAnimation.currentAnimation = "idle";
+            }
+        });
+
         this.gameObject.modify(PhysicsBody, physicsBody => {
-            const direction  = new Vector2(0,0);
-            if (ctx.input.isKeyHeld("KeyA")) direction.x += -1;
-            if (ctx.input.isKeyHeld("KeyD")) direction.x += 1;
-            if (ctx.input.isKeyHeld("KeyW")) direction.y += 1;
-            if (ctx.input.isKeyHeld("KeyS")) direction.y -= 1;
             physicsBody.velocity = direction.normalized().scaled(this.speed * ctx.dt);
         });
+
+        if (direction.x != 0) {
+            this.gameObject.modify(SpriteRenderer, spriteRenderer => {
+                spriteRenderer.scale.x = Math.abs(spriteRenderer.scale.x) * direction.x;
+            });
+        }
     }
 }
 

@@ -43,6 +43,14 @@ export class Registry {
         }
         const storage = this.#storage.get(type)!;
         storage.set(gameObject, aspect);
+        aspect._notifyModification = () => {
+            console.log("They modified something!");
+            if (this.frameChanges?.modifiedGameObjects.has(gameObject)) {
+                this.frameChanges?.modifiedGameObjects.get(gameObject)?.push(type);
+            } else {
+                this.frameChanges?.modifiedGameObjects.set(gameObject, [type])
+            }
+        }
     }
     getAspect<T extends Aspect>(gameObject: GameObject, type: AspectConstructor<T>): Readonly<T> | undefined {
         const storage = this.#storage.get(type);
@@ -52,18 +60,6 @@ export class Registry {
         }
         const aspect = storage.get(gameObject);
         return <T | undefined> aspect;
-    }
-    modifyAspect<T extends Aspect>(gameObject: GameObject, type: AspectConstructor<T>, modifier: (aspect: T) => void) {
-        const aspect = this.getAspect(gameObject, type);
-        if (aspect) {
-            modifier(aspect);
-            if (this.frameChanges) {
-                if (!this.frameChanges.modifiedGameObjects.has(gameObject)) {
-                    this.frameChanges.modifiedGameObjects.set(gameObject, []);
-                }
-                this.frameChanges.modifiedGameObjects.get(gameObject)!.push(type);
-            }
-        }
     }
     hasAspect<T extends Aspect>(gameObject: GameObject, type: AspectConstructor<T>): boolean {
         const storage = this.#storage.get(type);

@@ -7,21 +7,19 @@ export class TransformProcess extends Process {
     update(ctx: InstanceContext) {
         const root = ctx.scene.root;
         if (!root) return;
-        root.modify(Transform, (transform) => {
-            transform.worldPosition = transform.position;
-            transform.worldRotation = transform.rotation;
-            transform.worldScale = transform.scale;
-        })
+        const transform = root.get(Transform);
+        transform.worldPosition = transform.position;
+        transform.worldRotation = transform.rotation;
+        transform.worldScale = transform.scale;
         this.updateChildrenTransform(ctx, root);
     }
     updateChildrenTransform(ctx: InstanceContext, parent: GameObject) {
         const parentTransform = parent.get(Transform);
         const children = ctx.scene.getChildren(parent);
         for (const child of children) {
-            child.modify(Transform, (transform) => {
-                TransformProcess.applyParentTransform(transform, parentTransform);
-                this.updateChildrenTransform(ctx, child);
-            })
+            const childTransform = child.get(Transform);
+            TransformProcess.applyParentTransform(childTransform, parentTransform);
+            this.updateChildrenTransform(ctx, child);
         }
     }
     static applyParentTransform(childTransform: Transform, parentTransform: Transform) {

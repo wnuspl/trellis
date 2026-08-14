@@ -67,6 +67,7 @@ export class SceneLoader {
                 console.error(`Aspect with name ${aspectName} was not registered (ignoring)`);
                 continue;
             }
+            console.log(aspectData);
             const aspect = aspectType.from(aspectData);
             gameObject.add(aspect);
         }

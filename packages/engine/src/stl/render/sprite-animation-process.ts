@@ -15,9 +15,7 @@ export class SpriteAnimationProcess extends Process {
                         textureAlias: change
                     }));
                 } else {
-                    gameObject.modify(SpriteRenderer, spriteRenderer => {
-                        spriteRenderer.textureAlias = change;
-                    });
+                    gameObject.get(SpriteRenderer)!.textureAlias = change;
                 }
             }
         }
