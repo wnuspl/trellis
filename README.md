@@ -5,3 +5,4 @@
 ```
 npm create @wnuspl/trellis@latest game
 ```
+[Docs](docs/trellis.md)
