@@ -5,10 +5,6 @@ import {Behavior, type BehaviorConstructor} from "./behavior.js";
 
 import { Transform} from "../core/transform.js";
 
-type GetComponentMethod = {
-    (type: typeof Transform): Transform;
-    <T extends Component>(type: ComponentConstructor<T>): T | undefined;
-};
 type AttachBehaviorMethod = {
     <T extends Behavior>(
         type: new (go: GameObject) => T
@@ -30,9 +26,9 @@ export class GameObject {
 
         this.add(new Transform());
     }
-    public readonly get: GetComponentMethod= ((component: ComponentConstructor) => {
-        return this.#registry.getComponent(this, component);
-    }) as GetComponentMethod;
+    public readonly get = <T extends Component>(type: ComponentConstructor<T>): T | undefined => {
+        return this.#registry.getComponent(this, type);
+    }
     public readonly add = <T extends Component>(component: T): this => {
         this.#registry.addComponent(this, component);
         return this;
@@ -49,8 +45,10 @@ export class GameObject {
     get uuid() {
         return this.#uuid;
     }
+    get transform() {
+        return this.get(Transform)!;
+    }
     get behaviors() {
         return this.#behaviors.values();
     }
-
 }
