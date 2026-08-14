@@ -28,7 +28,7 @@ export class EditorProfile extends Profile {
     }
     async init() {
         const instance = this.instance;
-        instance.registry.registerAspect(
+        instance.registry.registerComponent(
             Transform, Tags, CameraOperator, Collider, SpriteRenderer,
         );
         instance.registerProcess(SceneTransferProcess);

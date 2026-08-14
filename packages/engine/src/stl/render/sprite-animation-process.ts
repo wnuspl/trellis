@@ -1,7 +1,7 @@
 import {Process} from "../../model/index.js";
 import type {InstanceContext} from "../../instance/index.js";
-import {SpriteAnimation} from "./sprite-animation-aspect.js";
-import {SpriteRenderer} from "./sprite-renderer-aspect.js";
+import {SpriteAnimation} from "./sprite-animation-component.js";
+import {SpriteRenderer} from "./sprite-renderer-component.js";
 
 export class SpriteAnimationProcess extends Process {
     update(ctx: InstanceContext) {

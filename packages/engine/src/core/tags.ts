@@ -1,6 +1,6 @@
-import {Aspect} from "../model/index.js";
+import {Component} from "../model/index.js";
 
-export class Tags extends Aspect {
+export class Tags extends Component {
     #tags: Set<string>;
     constructor(tags?: string[]) {
         super();

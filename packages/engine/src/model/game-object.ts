@@ -1,15 +1,15 @@
 import { Uuid } from "../utils/uuid.js";
-import { Aspect, type AspectConstructor } from "./aspect.js"
+import { Component, type ComponentConstructor } from "./component.js"
 import { Registry } from "./registry.js";
 import {Behavior, type BehaviorConstructor} from "./behavior.js";
 
 import { Tags } from "../core/tags.js";
 import { Transform} from "../core/transform.js";
 
-type GetAspectMethod = {
+type GetComponentMethod = {
     (type: typeof Transform): Transform;
     (type: typeof Tags): Tags;
-    <T extends Aspect>(type: AspectConstructor<T>): T | undefined;
+    <T extends Component>(type: ComponentConstructor<T>): T | undefined;
 };
 type AttachBehaviorMethod = {
     <T extends Behavior>(
@@ -33,11 +33,11 @@ export class GameObject {
         this.add(new Transform());
         this.add(new Tags());
     }
-    public readonly get: GetAspectMethod= ((aspect: AspectConstructor) => {
-        return this.#registry.getAspect(this, aspect);
-    }) as GetAspectMethod;
-    public readonly add = <T extends Aspect>(aspect: T): this => {
-        this.#registry.addAspect(this, aspect);
+    public readonly get: GetComponentMethod= ((component: ComponentConstructor) => {
+        return this.#registry.getComponent(this, component);
+    }) as GetComponentMethod;
+    public readonly add = <T extends Component>(component: T): this => {
+        this.#registry.addComponent(this, component);
         return this;
     }
     public readonly attach: AttachBehaviorMethod = (type: any, config?: any) => {

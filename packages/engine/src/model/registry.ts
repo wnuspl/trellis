@@ -1,11 +1,11 @@
 import { GameObject } from "./game-object.js";
-import type { Aspect, AspectConstructor } from "./aspect.js";
+import type { Component, ComponentConstructor } from "./component.js";
 import type {MutableFrameChanges} from "./frame-changes.js";
 
-type AspectStorage = Map<GameObject, Aspect>;
+type ComponentStorage = Map<GameObject, Component>;
 
 export class Registry {
-    #storage: Map<AspectConstructor, AspectStorage>;
+    #storage: Map<ComponentConstructor, ComponentStorage>;
     #gameObjects: Set<GameObject>;
     frameChanges: MutableFrameChanges | null = null;
     constructor() {
@@ -29,22 +29,21 @@ export class Registry {
             this.#gameObjects.delete(gameObject);
         }
     }
-    registerAspect(...typeArray: AspectConstructor[]) {
+    registerComponent(...typeArray: ComponentConstructor[]) {
         for (const type of typeArray) {
             if (!this.#storage.has(type)) {
                 this.#storage.set(type, new Map());
             }
         }
     }
-    addAspect(gameObject: GameObject, aspect: Aspect) {
-        const type = aspect.constructor as AspectConstructor;
+    addComponent(gameObject: GameObject, component: Component) {
+        const type = component.constructor as ComponentConstructor;
         if (!this.#storage.has(type)) {
             this.#storage.set(type, new Map());
         }
         const storage = this.#storage.get(type)!;
-        storage.set(gameObject, aspect);
-        aspect._notifyModification = () => {
-            console.log("They modified something!");
+        storage.set(gameObject, component);
+        component._notifyModification = () => {
             if (this.frameChanges?.modifiedGameObjects.has(gameObject)) {
                 this.frameChanges?.modifiedGameObjects.get(gameObject)?.push(type);
             } else {
@@ -52,25 +51,25 @@ export class Registry {
             }
         }
     }
-    getAspect<T extends Aspect>(gameObject: GameObject, type: AspectConstructor<T>): Readonly<T> | undefined {
+    getComponent<T extends Component>(gameObject: GameObject, type: ComponentConstructor<T>): Readonly<T> | undefined {
         const storage = this.#storage.get(type);
         if (!storage) {
-            console.error(`Aspect ${type} does not exist or is not registered.`);
+            console.error(`Component ${type} does not exist or is not registered.`);
             return;
         }
-        const aspect = storage.get(gameObject);
-        return <T | undefined> aspect;
+        const component = storage.get(gameObject);
+        return <T | undefined> component;
     }
-    hasAspect<T extends Aspect>(gameObject: GameObject, type: AspectConstructor<T>): boolean {
+    hasComponent<T extends Component>(gameObject: GameObject, type: ComponentConstructor<T>): boolean {
         const storage = this.#storage.get(type);
         if (!storage) {
-            console.error(`Aspect ${type} does not exist or is not registered.`);
+            console.error(`Component ${type} does not exist or is not registered.`);
             return false;
         }
-        const aspect = storage.get(gameObject);
-        return !!aspect;
+        const component = storage.get(gameObject);
+        return !!component;
     }
-    query(typeArray: AspectConstructor[], pool?: Set<GameObject>): GameObject[] {
+    query(typeArray: ComponentConstructor[], pool?: Set<GameObject>): GameObject[] {
         if (!pool) pool = this.#gameObjects;
         if (typeArray.length == 0) {
             return Array.from(pool);
@@ -80,7 +79,7 @@ export class Registry {
         for (const type of typeArray) {
             const storage = this.#storage.get(type);
             if (!storage) {
-                // console.error(`Aspect ${type.name} does not exist or is not registered.`);
+                // console.error(`Component ${type.name} does not exist or is not registered.`);
                 return [];
             }
             const uuids = new Set(storage.keys());

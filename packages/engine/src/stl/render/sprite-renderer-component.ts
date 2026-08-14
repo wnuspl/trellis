@@ -1,9 +1,9 @@
-import { Aspect } from "../../model/aspect.js";
+import { Component } from "../../model/component.js";
 import {Vector2} from "../../utils/index.js";
 import {markModification} from "../../tracked.js";
 import {TrackedVector2} from "../../utils/tracked-vector2.js";
 
-export class SpriteRenderer extends Aspect {
+export class SpriteRenderer extends Component {
     #textureAlias: string;
     #opacity: number;
     #scale: TrackedVector2;

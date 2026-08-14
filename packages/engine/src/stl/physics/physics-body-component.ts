@@ -1,4 +1,4 @@
-import {Aspect} from "../../model/index.js";
+import {Component} from "../../model/index.js";
 import {Vector2} from "../../utils/index.js";
 
 
@@ -10,7 +10,7 @@ type PhysicsBodyArgs = {
     restitution?: number;
 }
 
-export class PhysicsBody extends Aspect {
+export class PhysicsBody extends Component {
     velocity: Vector2;
     gravityScale: number;
     mass: number;

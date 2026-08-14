@@ -1,4 +1,4 @@
-import {Aspect} from "../../model/index.js";
+import {Component} from "../../model/index.js";
 import {Vector2} from "../../utils/index.js";
 import {Transform} from "../../core/index.js";
 
@@ -38,7 +38,7 @@ export class AABBCollider extends ColliderShape {
 }
 
 
-export class Collider extends Aspect {
+export class Collider extends Component {
     readonly shape: ColliderShape
     constructor(shape: ColliderShape) {
         super();

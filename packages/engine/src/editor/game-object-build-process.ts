@@ -21,7 +21,7 @@ export class GameObjectBuildProcess extends Process {
 
             this.editorCtx.selected = this.editorCtx.sceneLoader.buildGameObject(ctx.scene, {
                 alias,
-                aspects: {}
+                components: {}
             });
         }
     }

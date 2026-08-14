@@ -1,7 +1,7 @@
 import {Process} from "../../model/index.js";
 import type {InstanceContext} from "../../instance/index.js";
 import {Transform} from "../../core/index.js";
-import {PhysicsBody} from "./physics-body-aspect.js";
+import {PhysicsBody} from "./physics-body-component.js";
 
 export class DynamicsProcess extends Process {
     static GRAVITY_ACCELERATION: number = -0.35;

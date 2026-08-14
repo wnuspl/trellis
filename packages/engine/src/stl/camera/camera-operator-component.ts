@@ -1,8 +1,8 @@
-import {Aspect} from "../../model/index.js";
+import {Component} from "../../model/index.js";
 import {Camera} from "../../pixijs/camera.js";
 import {Vector2} from "../../utils/index.js";
 
-export class CameraOperator extends Aspect {
+export class CameraOperator extends Component {
     #camera: Camera;
     position: Vector2;
     constructor(args?: { position?: Vector2, zoom?: number }) {

@@ -2,7 +2,7 @@ import {Process} from "../../model/index.js";
 import type {InstanceContext} from "../../instance/index.js";
 import {CollisionEvent} from "./collision-process.js";
 import {Transform} from "../../core/index.js";
-import {PhysicsBody} from "./physics-body-aspect.js";
+import {PhysicsBody} from "./physics-body-component.js";
 
 export class ResolutionProcess extends Process {
     update(ctx: InstanceContext) {

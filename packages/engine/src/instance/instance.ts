@@ -90,9 +90,9 @@ export class Instance {
 
         this.#updateProcesses(this.#context);
 
-        for (const [gameObject, aspectTypes] of this.#context.changes.modifiedGameObjects.entries()) {
-            for (const aspectType of aspectTypes) {
-                gameObject.get(aspectType)!._reset();
+        for (const [gameObject, componentTypes] of this.#context.changes.modifiedGameObjects.entries()) {
+            for (const componentType of componentTypes) {
+                gameObject.get(componentType)!._reset();
             }
         }
         const changes = new MutableFrameChanges();

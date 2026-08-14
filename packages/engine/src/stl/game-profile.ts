@@ -7,7 +7,7 @@ import {CameraOperator, CameraProcess } from "./camera/index.js";
 export class GameProfile extends Profile {
     async init() {
         const instance = this.instance;
-        instance.registry.registerAspect(
+        instance.registry.registerComponent(
             Transform, Tags, CameraOperator, Collider, PhysicsBody, SpriteRenderer,
         );
         instance.registerProcess(SceneTransferProcess);

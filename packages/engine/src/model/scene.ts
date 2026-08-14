@@ -1,6 +1,6 @@
 import type {GameObject} from "./game-object.js";
 import type {Registry} from "./registry.js";
-import type {AspectConstructor} from "./aspect.js";
+import type {ComponentConstructor} from "./component.js";
 import type {Blueprint} from "./blueprint.js";
 
 const EMPTY_SET: Set<GameObject> = new Set();
@@ -53,7 +53,7 @@ export class Scene {
         this.assertInitialized();
         return this.#children!.get(parent) ?? EMPTY_SET;
     }
-    query(typeArray: AspectConstructor[]) {
+    query(typeArray: ComponentConstructor[]) {
         this.assertInitialized();
         return this.#registry.query(typeArray, this.#gameObjects);
     }
@@ -93,6 +93,6 @@ export class Scene {
 }
 
 export type ReadonlyScene = {
-    query(typeArray: AspectConstructor[]): GameObject[];
+    query(typeArray: ComponentConstructor[]): GameObject[];
     getChildren(parent: GameObject): Set<GameObject>;
 }

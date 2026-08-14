@@ -1,6 +1,6 @@
 import {Process} from "../../model/index.js";
 import type {InstanceContext} from "../../instance/index.js";
-import {CameraOperator} from "./camera-operator-aspect.js";
+import {CameraOperator} from "./camera-operator-component.js";
 import {Transform} from "../../core/index.js";
 
 export class CameraProcess extends Process {

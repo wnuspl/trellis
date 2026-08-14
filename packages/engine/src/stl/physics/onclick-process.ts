@@ -2,7 +2,7 @@ import {GameObject, Process} from "../../model/index.js";
 import type {InstanceContext} from "../../instance/index.js";
 import {FrameEvent} from "../../events.js";
 import type {MouseButton} from "../../input/input-system.js";
-import {AABBCollider, CircleCollider, Collider, ColliderShape} from "./collider-aspect.js";
+import {AABBCollider, CircleCollider, Collider, ColliderShape} from "./collider-component.js";
 import {Transform} from "../../core/index.js";
 
 export class OnclickEvent extends FrameEvent {

@@ -1,5 +1,5 @@
 import {Vector2, type Vector2Unserialized} from "../utils/vector2.js";
-import {Aspect} from "../model/aspect.js";
+import {Component} from "../model/component.js";
 import {TrackedVector2} from "../utils/tracked-vector2.js";
 import {markModification} from "../tracked.js";
 
@@ -9,7 +9,7 @@ export type TransformUnserialized = {
     scale: Vector2Unserialized;
 };
 
-export class Transform extends Aspect {
+export class Transform extends Component {
     #position: TrackedVector2;
     #rotation: number;
     #scale: TrackedVector2;

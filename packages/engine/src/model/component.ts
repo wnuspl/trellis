@@ -1,11 +1,11 @@
 import type {Tracked} from "../tracked.js";
 
-export interface AspectConstructor<T extends Aspect = Aspect> {
+export interface ComponentConstructor<T extends Component = Component> {
     new (...args: any[]): T;
-    from(data: object): Aspect
+    from(data: object): Component
 }
 
-export class Aspect implements Tracked {
+export class Component implements Tracked {
     _notifyModificationInternal: (() => void) | undefined;
     _modified: boolean = false;
     _reset() {
@@ -17,8 +17,8 @@ export class Aspect implements Tracked {
     set _notifyModification(callback: (() => void) | undefined) {
         this._notifyModificationInternal = callback;
     }
-    static from(data: object): Aspect {
-        console.error(`Aspect from ${this.name} used but not defined`);
-        return new Aspect();
+    static from(data: object): Component {
+        console.error(`Component from ${this.name} used but not defined`);
+        return new Component();
     }
 }

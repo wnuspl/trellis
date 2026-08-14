@@ -1,5 +1,5 @@
 import { Process } from "../../model/process.js";
-import { SpriteRenderer } from "./sprite-renderer-aspect.js";
+import { SpriteRenderer } from "./sprite-renderer-component.js";
 import {Transform} from "../../core/index.js";
 import type {InstanceContext} from "../../instance/index.js";
 import {WorldSprite} from "../../pixijs/index.js";
@@ -29,8 +29,8 @@ export class SpriteRenderProcess extends Process {
             this.application.add(sprite);
         } else {
             sprite = this.#spriteCache.get(gameObject)!;
-            const modifiedAspects = ctx.changes.modifiedGameObjects.get(gameObject) ?? [];
-            const modified = modifiedAspects.filter(aspect => aspect === SpriteRenderer)[0];
+            const modifiedComponents = ctx.changes.modifiedGameObjects.get(gameObject) ?? [];
+            const modified = modifiedComponents.filter(component => component === SpriteRenderer)[0];
             if (modified) {
                 sprite.texture = spriteRenderer.textureAlias;
             }

@@ -1,4 +1,4 @@
-import {Aspect} from "../../model/index.js";
+import {Component} from "../../model/index.js";
 
 export type AnimationConfig = {
     frames: string[],
@@ -6,7 +6,7 @@ export type AnimationConfig = {
     loop: boolean,
 }
 
-export class SpriteAnimation extends Aspect {
+export class SpriteAnimation extends Component {
     animations: Record<string, AnimationConfig>;
     #currentAnimationConfig: AnimationConfig = { frames: [], frameDuration: 0, loop: false };
     #currentAnimation: string = "";

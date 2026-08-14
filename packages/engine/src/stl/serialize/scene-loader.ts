@@ -1,30 +1,30 @@
 import type {Scene} from "../../model/scene.js";
-import {type AspectConstructor, Blueprint, GameObject} from "../../model/index.js";
+import {type ComponentConstructor, Blueprint, GameObject} from "../../model/index.js";
 import type {ResourceLoader} from "../resource-loader.js";
 
 export type SerializationConfig = {
     alias: string,
     blueprint: Blueprint,
-    targetAspectTypes?: AspectConstructor[],
+    targetComponentTypes?: ComponentConstructor[],
 }
 
 export class SceneLoader {
     resourceLoader: ResourceLoader;
     config: Map<string, SerializationConfig>;
-    aspectNames: Map<string, AspectConstructor>;
+    componentNames: Map<string, ComponentConstructor>;
     gameObjectAlias: Map<GameObject, string>
     constructor(resourceLoader: ResourceLoader) {
         this.resourceLoader = resourceLoader;
         this.config = new Map();
-        this.aspectNames = new Map();
+        this.componentNames = new Map();
         this.gameObjectAlias = new Map();
     }
     register(...args: SerializationConfig[]) {
         for (const sc of args) {
             this.config.set(sc.alias, sc);
-            for (const aspect of sc.targetAspectTypes ?? []) {
-                if (!this.aspectNames.has(aspect.name)) {
-                    this.aspectNames.set(aspect.name, aspect);
+            for (const component of sc.targetComponentTypes ?? []) {
+                if (!this.componentNames.has(component.name)) {
+                    this.componentNames.set(component.name, component);
                 }
             }
         }
@@ -45,7 +45,7 @@ export class SceneLoader {
         }
         await this.resourceLoader.write(path, JSON.stringify(data));
     }
-    buildGameObject(scene: Scene, obj: { alias: string, aspects: object }) {
+    buildGameObject(scene: Scene, obj: { alias: string, components: object }) {
         const alias = obj.alias;
         const config = this.config.get(alias);
         if (!config) {
@@ -55,21 +55,21 @@ export class SceneLoader {
         const gameObject = scene.build(config.blueprint);
         this.gameObjectAlias.set(gameObject, alias);
 
-        if (!config.targetAspectTypes || config.targetAspectTypes.length == 0) return gameObject;
+        if (!config.targetComponentTypes || config.targetComponentTypes.length == 0) return gameObject;
 
-        if (!obj.aspects) {
-            console.error(`Object with alias ${alias} configures aspect but data does not provide aspects. Still creating object`);
+        if (!obj.components) {
+            console.error(`Object with alias ${alias} configures component but data does not provide components. Still creating object`);
             return gameObject;
         }
-        for (const [aspectName, aspectData] of Object.entries(obj.aspects)) {
-            const aspectType = this.aspectNames.get(aspectName);
-            if (!aspectType) {
-                console.error(`Aspect with name ${aspectName} was not registered (ignoring)`);
+        for (const [componentName, componentData] of Object.entries(obj.components)) {
+            const componentType = this.componentNames.get(componentName);
+            if (!componentType) {
+                console.error(`Component with name ${componentName} was not registered (ignoring)`);
                 continue;
             }
-            console.log(aspectData);
-            const aspect = aspectType.from(aspectData);
-            gameObject.add(aspect);
+            console.log(componentData);
+            const component = componentType.from(componentData);
+            gameObject.add(component);
         }
 
         return gameObject;
@@ -84,20 +84,20 @@ export class SceneLoader {
             return;
         }
 
-        const aspects = new Map();
-        for (const aspectType of config.targetAspectTypes ?? []) {
-            const aspect = gameObject.get(aspectType);
-            if (!aspect) {
-                console.error(`Object doesn't have aspect ${aspectType.name} although it is target in config.`);
+        const components = new Map();
+        for (const componentType of config.targetComponentTypes ?? []) {
+            const component = gameObject.get(componentType);
+            if (!component) {
+                console.error(`Object doesn't have component ${componentType.name} although it is target in config.`);
                 continue;
             }
-            const name = aspectType.name;
-            aspects.set(name, aspect);
+            const name = componentType.name;
+            components.set(name, component);
         }
 
         return {
             alias,
-            aspects: Object.fromEntries(aspects)
+            components: Object.fromEntries(components)
         };
     }
 }
