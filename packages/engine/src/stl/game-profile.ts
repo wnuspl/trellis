@@ -1,5 +1,5 @@
 import {Profile} from "../instance/index.js";
-import {CreateProcess, DestroyProcess, SceneTransferProcess, Tags, Transform, TransformProcess} from "../core/index.js";
+import {CreateProcess, DestroyProcess, SceneTransferProcess, Transform, TransformProcess} from "../core/index.js";
 import {Collider, OnclickProcess, PhysicsBody, PhysicsProcess} from "./physics/index.js";
 import {SpriteAnimationProcess, SpriteRenderer, SpriteRenderProcess} from "./render/index.js";
 import {CameraOperator, CameraProcess } from "./camera/index.js";
@@ -8,7 +8,7 @@ export class GameProfile extends Profile {
     async init() {
         const instance = this.instance;
         instance.registry.registerComponent(
-            Transform, Tags, CameraOperator, Collider, PhysicsBody, SpriteRenderer,
+            Transform, CameraOperator, Collider, PhysicsBody, SpriteRenderer,
         );
         instance.registerProcess(SceneTransferProcess);
         instance.registerProcess(DestroyProcess);

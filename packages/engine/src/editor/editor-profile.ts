@@ -1,5 +1,5 @@
 import {Profile, type ProfileConfig} from "../instance/index.js";
-import {CreateProcess, DestroyProcess, SceneTransferProcess, Tags, Transform, TransformProcess} from "../core/index.js";
+import {CreateProcess, DestroyProcess, SceneTransferProcess, Transform, TransformProcess} from "../core/index.js";
 import {
     CameraOperator,
     CameraProcess,
@@ -29,7 +29,7 @@ export class EditorProfile extends Profile {
     async init() {
         const instance = this.instance;
         instance.registry.registerComponent(
-            Transform, Tags, CameraOperator, Collider, SpriteRenderer,
+            Transform, CameraOperator, Collider, SpriteRenderer,
         );
         instance.registerProcess(SceneTransferProcess);
         instance.registerProcess(DestroyProcess);
