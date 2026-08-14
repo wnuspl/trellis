@@ -26,8 +26,8 @@ export class ResolutionProcess extends Process {
             const invMassTotal = invMassA + invMassB;
             const diffA = normal.scaled(penetration * invMassA/invMassTotal);
             const diffB = normal.scaled(penetration * invMassB/invMassTotal);
-            a.get(Transform).position.subtract(diffA);
-            b.get(Transform).position.add(diffB);
+            a.transform.position.subtract(diffA);
+            b.transform.position.subtract(diffB);
 
 
             const relativeVelocity = physicsBodyB.velocity.minus(physicsBodyA.velocity);

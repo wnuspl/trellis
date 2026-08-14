@@ -34,7 +34,7 @@ export class OnclickProcess extends Process {
 
         const gameObjects = ctx.scene.query([Collider]);
         for (const gameObject of gameObjects) {
-            const transform = gameObject.get(Transform);
+            const transform = gameObject.transform;
             const colliderWorldShape = gameObject.get(Collider)!.shape.worldShape(transform);
             const mouseWorldPosition = ctx.camera.toWorldPosition(
                 ctx.input.mouseScreenPosition()

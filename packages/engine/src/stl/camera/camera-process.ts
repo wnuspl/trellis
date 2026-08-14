@@ -13,7 +13,7 @@ export class CameraProcess extends Process {
         const target = candidates[0]!;
         const cameraOperator = target.get(CameraOperator)!;
         this.application.camera = cameraOperator.camera;
-        this.application.camera.position = target.get(Transform).worldPosition.plus(cameraOperator.position);
+        this.application.camera.position = target.transform.worldPosition.plus(cameraOperator.position);
         this.application.syncCamera();
     }
 }

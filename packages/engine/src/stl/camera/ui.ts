@@ -8,6 +8,6 @@ export class UIParentBehavior extends Behavior {
     update(ctx: BehaviorContext) {
         const camera = ctx.camera;
 
-        this.gameObject.get(Transform).position = camera.position;
+        this.gameObject.transform.position = camera.position;
     }
 }

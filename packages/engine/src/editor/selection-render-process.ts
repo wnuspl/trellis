@@ -18,7 +18,7 @@ export class SelectionRenderProcess extends Process {
             const collider = this.editorCtx.selected.get(Collider);
             if (this.cachedGameObject !== this.editorCtx.selected) this.destroyGraphics();
             if (collider && !this.graphics) {
-                const transform = this.editorCtx.selected.get(Transform);
+                const transform = this.editorCtx.selected.transform;
                 this.graphics = new WorldGraphics();
                 const colliderWorldShape = collider.shape.worldShape(transform);
                 if (colliderWorldShape instanceof AABBCollider) {

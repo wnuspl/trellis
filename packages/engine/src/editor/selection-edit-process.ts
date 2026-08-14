@@ -23,7 +23,7 @@ export class SelectionEditProcess extends Process {
         if (ctx.input.isKeyHeld("KeyD")) direction.x += 1;
         if (ctx.input.isKeyHeld("KeyW")) direction.y += 1;
         if (ctx.input.isKeyHeld("KeyS")) direction.y += -1;
-        const transform = this.editorCtx.selected.get(Transform);
+        const transform = this.editorCtx.selected.transform;
         if (this.editorCtx.mode === "position") {
             const movement = direction.normalized().scaled(1.5*ctx.dt);
             transform.position.add(movement);
