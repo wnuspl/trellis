@@ -5,4 +5,5 @@ Write code as normal. Don't be obstructed by the ceremony of game architecture. 
 # sections
 
 1. [Blueprints](blueprints.md)
+3. [Behaviors](behaviors.md)
 2. [Components](components.md)
