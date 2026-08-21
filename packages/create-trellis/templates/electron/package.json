@@ -1,0 +1,24 @@
+{
+  "name": "raw",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build-tsc": "tsc --noEmit",
+    "build": "tsc --noEmit && node build.mjs",
+    "start": "npm run build && electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "electron": "^43.4.1",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@wnuspl/trellis": "^0.1.0"
+  }
+}

@@ -1,4 +1,5 @@
-import {ResourceLoader} from "@wnuspl/trellis/stl";
+import { ResourceLoader, GameProfile } from "@wnuspl/trellis/stl";
+import { runGame} from "./game.js";
 
 async function writeToFile(path: string, content: string) {
     await fetch("http://localhost:5174/write", {
@@ -18,7 +19,15 @@ async function readFromFile(path: string) {
 }
 
 
-export const resourceLoader = new ResourceLoader({
+const resourceLoader = new ResourceLoader({
     read: readFromFile,
     write: writeToFile
 });
+
+const profile = new GameProfile({
+    mount: document.body
+});
+
+profile.instance.config.assetFileNameList = Object.keys(import.meta.glob("/assets/*"));
+
+runGame(profile, resourceLoader);

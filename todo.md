@@ -17,3 +17,7 @@ As of 8.14
 - Click on sprite, not collider
 - Delete gameobject
 - Eventually, add children? this is bad bad news
+
+# template
+- Make electron-vite version
+- Make script allow you to choose platform

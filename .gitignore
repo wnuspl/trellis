@@ -24,4 +24,4 @@ Thumbs.db
 .idea/
 
 packages/test
-packages/light
+packages/raw-electron
