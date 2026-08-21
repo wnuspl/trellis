@@ -4,6 +4,7 @@ import {Transform} from "../../core/index.js";
 import {AABBCollider, CircleCollider, Collider, ColliderShape} from "./collider-component.js";
 import {GameObject, Process} from "../../model/index.js";
 import {FrameEvent} from "../../events.js";
+import type {BehaviorContext} from "../../model/behavior.js";
 
 export type CollisionManifold = {
     isCollision: boolean;
@@ -35,7 +36,7 @@ export class CollisionEvent extends FrameEvent {
         }
         return this;
     }
-    static each(target: GameObject, ctx: InstanceContext, action: (other: GameObject) => void) {
+    static each(target: GameObject, ctx: BehaviorContext, action: (other: GameObject) => void) {
         for (const collisionEvent of ctx.events.getFor(CollisionEvent, target)) {
             action(collisionEvent.b);
         }
