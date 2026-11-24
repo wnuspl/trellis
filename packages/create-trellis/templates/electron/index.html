@@ -1,15 +1,16 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Pixi compiles shaders with new Function(), so 'unsafe-eval' is required. -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:">
     <title>Trellis Game</title>
     <style>
         body { margin: 0; overflow: hidden; height: 100vh; }
     </style>
-
 </head>
-
 <body>
-<script type="module" src="dist/index.js"></script>
+<script type="module" src="./dist/renderer.js"></script>
 </body>
 </html>

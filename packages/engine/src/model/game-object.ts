@@ -5,20 +5,14 @@ import {Behavior, type BehaviorConstructor} from "./behavior.js";
 
 import { Transform} from "../core/transform.js";
 
-type AttachBehaviorMethod = {
-    <T extends Behavior>(
-        type: new (go: GameObject) => T
-    ): T;
-    <T extends Behavior, TConfig>(
-        type: new (go: GameObject, config: TConfig) => T,
-        config: TConfig
-    ): T;
-};
-
-export class GameObject {
+/**
+ * C is the set of components this object is known to have. `in` makes an object
+ * with more components usable anywhere one with fewer is expected.
+ */
+export class GameObject<in C extends Component = Transform> {
     #uuid: Uuid;
     #registry: Registry;
-    #behaviors: Map<BehaviorConstructor<any,any>, Behavior>;
+    #behaviors: Map<BehaviorConstructor<any,any>, Behavior<any>>;
     constructor(registry: Registry) {
         this.#registry = registry;
         this.#uuid = new Uuid();
@@ -26,27 +20,48 @@ export class GameObject {
 
         this.add(new Transform());
     }
-    public readonly get = <T extends Component>(type: ComponentConstructor<T>): T | undefined => {
-        return this.#registry.getComponent(this, type);
+    get<T extends C>(type: ComponentConstructor<T>): T;
+    get<T extends Component>(type: ComponentConstructor<T>): T | undefined;
+    get(type: ComponentConstructor): Component | undefined {
+        return this.#registry.getComponent(this as GameObject<any>, type);
     }
-    public readonly add = <T extends Component>(component: T): this => {
-        this.#registry.addComponent(this, component);
-        return this;
+    add<T extends Component>(component: T): GameObject<C | T> {
+        this.#registry.addComponent(this as GameObject<any>, component);
+        return this as GameObject<C | T>;
     }
-    public readonly attach: AttachBehaviorMethod = (type: any, config?: any) => {
-        const behavior = new type(this, config);
-        if (this.#behaviors.has(type)) {
-            console.error(`Tried to add behavior ${type.name} multiple times to Game Object ${this.uuid}`);
-            return;
+    // `this: GameObject<N>` only matches if the object already has every component N needs.
+    attach<T extends Behavior<N>, N extends Component>(
+        this: GameObject<NoInfer<N>>,
+        type: new (go: GameObject<N>) => T
+    ): T;
+    attach<T extends Behavior<N>, N extends Component, TConfig>(
+        this: GameObject<NoInfer<N>>,
+        type: new (go: GameObject<N>, config: TConfig) => T,
+        config: TConfig
+    ): T;
+    attach(type: any, config?: any): Behavior<any> {
+        const existing = this.#behaviors.get(type);
+        if (existing) {
+            console.error(`Tried to add behavior ${type.name} multiple times to Game Object ${this.uuid.id}`);
+            return existing;
         }
+        for (const required of type.requires) {
+            if (!this.get(required)) {
+                throw new Error(`Behavior ${type.name} requires ${required.name} on Game Object ${this.uuid.id}`);
+            }
+        }
+        const behavior = new type(this, config);
         this.#behaviors.set(type, behavior);
-        return this;
+        return behavior;
     }
     get uuid() {
         return this.#uuid;
     }
     get transform() {
         return this.get(Transform)!;
+    }
+    get components(): readonly Component[] {
+        return this.#registry.getComponents(this as GameObject<any>);
     }
     get behaviors() {
         return this.#behaviors.values();

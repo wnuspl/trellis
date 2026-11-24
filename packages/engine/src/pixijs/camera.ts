@@ -1,21 +1,27 @@
 import {Vector2} from "../utils/index.js";
 
+/**
+ * Camera position is stored in world space (y up). The flip to Pixi's
+ * y-down render space happens in PixiApplication.syncCamera.
+ */
 export class Camera {
     #position: Vector2;
     zoom: number;
     constructor(position?: Vector2, zoom?: number) {
-        this.#position = position ?? new Vector2(0,0);
+        this.#position = position?.clone() ?? new Vector2(0,0);
         this.zoom = zoom ?? 1;
     }
     get position() {
         return this.#position;
     }
     set position(position: Vector2) {
-        const renderPosition = new Vector2(position.x, -position.y);
-        this.#position = renderPosition;
+        this.#position = position.clone();
     }
+    /**
+     * Converts a screen position (pixels from the screen center, y up, as
+     * produced by the mouse input) to a world position.
+     */
     toWorldPosition(screenPosition: Vector2) {
-        const offset = this.position.scaled(this.zoom);
-        return screenPosition.plus(offset);
+        return screenPosition.scaled(1/this.zoom).plus(this.#position);
     }
 }

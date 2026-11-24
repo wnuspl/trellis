@@ -1,0 +1,11 @@
+{
+  "title": "Vite (web)",
+  "description": "Browser game with hot reload. Scene files are read and written through a small local file server.",
+  "order": 1,
+  "nextSteps": [
+    "npm install",
+    "npm run file-server   # in one terminal (serves scene files)",
+    "npm run dev           # in another; add ?editor to the URL for the scene editor",
+    "npm run build         # playable game in dist/ (npm run preview to try it)"
+  ]
+}

@@ -10,7 +10,6 @@ import {FrameRequestStore} from "../requests.js";
 import {MutableFrameChanges} from "../model/index.js";
 import {Scene} from "../model/scene.js";
 import {SceneManager} from "./scene-manager.js";
-import {CollisionEvent} from "../stl/index.js";
 
 
 export class Instance {
@@ -92,7 +91,8 @@ export class Instance {
 
         for (const [gameObject, componentTypes] of this.#context.changes.modifiedGameObjects.entries()) {
             for (const componentType of componentTypes) {
-                gameObject.get(componentType)!._reset();
+                // The object (or component) may have been destroyed after it was modified this frame.
+                gameObject.get(componentType)?._reset();
             }
         }
         const changes = new MutableFrameChanges();
@@ -100,6 +100,7 @@ export class Instance {
         this.#context.changes = changes;
         this.#context.requests.clear();
         this.#context.camera = this.#systems.application.camera;
+        this.#context.scene = this.#systems.sceneManager.current;
 
         this.#updateBehaviors(this.#context);
         this.#context.events.clear();
@@ -107,6 +108,8 @@ export class Instance {
     #updateProcesses(ctx: InstanceContext) {
         for (const process of this.processes.values()) {
             process.update(ctx);
+            // A process (e.g. SceneTransferProcess) may have swapped and destroyed the scene.
+            ctx.scene = this.#systems.sceneManager.current;
         }
     }
     #updateBehaviors(ctx: InstanceContext) {

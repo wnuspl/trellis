@@ -6,8 +6,13 @@ import type {FrameEventStore, ReadonlyFrameEventStore} from "../events.js";
 import type {ReadonlyFrameChanges} from "./frame-changes.js";
 import {FrameRequestStore} from "../requests.js";
 import type {Camera} from "../pixijs/camera.js";
+import type {Component, ComponentConstructor} from "./component.js";
+import type {Transform} from "../core/transform.js";
 
-export type BehaviorConstructor<T extends Behavior, TConfig> = new (gameObject: GameObject, config: TConfig) => T;
+export type BehaviorConstructor<T extends Behavior<any>, TConfig> = {
+    new (gameObject: GameObject<any>, config: TConfig): T;
+    readonly requires: readonly ComponentConstructor[];
+};
 
 
 export type BehaviorContext = {
@@ -20,9 +25,11 @@ export type BehaviorContext = {
     camera: Camera;
 }
 
-export abstract class Behavior {
-    #gameObject: GameObject;
-    constructor(gameObject: GameObject) {
+export abstract class Behavior<C extends Component = Transform> {
+    /** Components that must be on the object before attach(). Checked at runtime. */
+    static readonly requires: readonly ComponentConstructor[] = [];
+    #gameObject: GameObject<C>;
+    constructor(gameObject: GameObject<C>) {
         this.#gameObject = gameObject;
         this.init();
     }

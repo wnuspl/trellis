@@ -24,21 +24,22 @@ export class ResolutionProcess extends Process {
             const invMassA = physicsBodyA.static ? 0 : 1/physicsBodyA.mass;
             const invMassB = physicsBodyB.static ? 0 : 1/physicsBodyB.mass;
             const invMassTotal = invMassA + invMassB;
+            if (invMassTotal === 0) continue;
             const diffA = normal.scaled(penetration * invMassA/invMassTotal);
             const diffB = normal.scaled(penetration * invMassB/invMassTotal);
             a.transform.position.subtract(diffA);
-            b.transform.position.subtract(diffB);
+            b.transform.position.add(diffB);
 
 
             const relativeVelocity = physicsBodyB.velocity.minus(physicsBodyA.velocity);
             const velocityAlongNormal = relativeVelocity.dot(normal);
-            if (velocityAlongNormal > 0) return;
+            if (velocityAlongNormal > 0) continue;
             // using max
             const e = Math.max(physicsBodyA.restitution, physicsBodyB.restitution);
             const j = -(1 + e) * velocityAlongNormal
                 / (invMassA + invMassB);
             const impulse = normal.scaled(j);
-            if (impulse.magnitude() < 0.4) return;
+            if (impulse.magnitude() < 0.4) continue;
             physicsBodyA.velocity.subtract(impulse.scaled(invMassA));
             physicsBodyB.velocity.add(impulse.scaled(invMassB));
 

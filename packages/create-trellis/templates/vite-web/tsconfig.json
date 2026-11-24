@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "target": "es2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "lib": ["es2023", "dom", "dom.iterable"],
+    "types": ["vite/client"],
     "strict": true,
     "skipLibCheck": true,
-    "outDir": "dist",
-    "types": ["vite/client"]
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true
   },
   "include": ["src"]
 }

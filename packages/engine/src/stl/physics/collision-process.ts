@@ -32,7 +32,7 @@ export class CollisionEvent extends FrameEvent {
         if (gameObject == this.a) {
             return this;
         } else if (gameObject == this.b) {
-            return new CollisionEvent(this.b, this.a, this.manifold);
+            return new CollisionEvent(this.b, this.a, { ...this.manifold, normal: this.manifold.normal.scaled(-1) });
         }
         return this;
     }
@@ -48,14 +48,14 @@ export class CollisionProcess extends Process {
         const gameObjects = ctx.scene.query([Collider]);
         for (let i=0; i<gameObjects.length; i++) {
             const a = {
-                colliderShape: gameObjects[i]!.get(Collider)!.shape,
-                transform: gameObjects[i]!.get(Transform)!,
+                colliderShape: gameObjects[i]!.get(Collider).shape,
+                transform: gameObjects[i]!.get(Transform),
             }
             a.colliderShape = a.colliderShape.worldShape(a.transform);
             for (let j=0; j<i; j++) {
                 const b = {
-                    colliderShape: gameObjects[j]!.get(Collider)!.shape,
-                    transform: gameObjects[j]!.get(Transform)!,
+                    colliderShape: gameObjects[j]!.get(Collider).shape,
+                    transform: gameObjects[j]!.get(Transform),
                 }
                 b.colliderShape = b.colliderShape.worldShape(b.transform);
                 const collision = CollisionProcess.detectCollision(a,b);
@@ -136,13 +136,13 @@ export class CollisionProcess extends Process {
             const minDist = Math.min(left, right, bottom, top);
 
             if (minDist === left) {
-                diff = new Vector2(-1, 0);
-            } else if (minDist === right) {
                 diff = new Vector2(1, 0);
+            } else if (minDist === right) {
+                diff = new Vector2(-1, 0);
             } else if (minDist === bottom) {
-                diff = new Vector2(0, -1);
-            } else {
                 diff = new Vector2(0, 1);
+            } else {
+                diff = new Vector2(0, -1);
             }
 
             return {
@@ -159,10 +159,35 @@ export class CollisionProcess extends Process {
         };
     }
     static AABBAABB(a: CollisionObject, b: CollisionObject) {
+        const aabbA = a.colliderShape as AABBCollider;
+        const aabbB = b.colliderShape as AABBCollider;
+
+        const diff = b.transform.worldPosition.minus(a.transform.worldPosition);
+
+        // Overlap on each axis = sum of half extents minus center distance.
+        const overlapX = (aabbA.dim.x + aabbB.dim.x) * 0.5 - Math.abs(diff.x);
+        const overlapY = (aabbA.dim.y + aabbB.dim.y) * 0.5 - Math.abs(diff.y);
+
+        if (overlapX <= 0 || overlapY <= 0) {
+            return {
+                isCollision: false,
+                normal: new Vector2(0, 0),
+                penetration: 0
+            };
+        }
+
+        // Resolve along the axis of least penetration; normal points from a to b.
+        if (overlapX < overlapY) {
+            return {
+                isCollision: true,
+                normal: new Vector2(diff.x < 0 ? -1 : 1, 0),
+                penetration: overlapX
+            };
+        }
         return {
-            isCollision: false,
-            normal: new Vector2(0,0),
-            penetration: 0
+            isCollision: true,
+            normal: new Vector2(0, diff.y < 0 ? -1 : 1),
+            penetration: overlapY
         };
     }
 }

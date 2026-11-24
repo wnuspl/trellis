@@ -1,4 +1,5 @@
 import { GameObject } from "./game-object.js";
+import type { Transform } from "../core/transform.js";
 import type { Component, ComponentConstructor } from "./component.js";
 import type {MutableFrameChanges} from "./frame-changes.js";
 
@@ -60,6 +61,14 @@ export class Registry {
         const component = storage.get(gameObject);
         return <T | undefined> component;
     }
+    getComponents(gameObject: GameObject): Component[] {
+        const components: Component[] = [];
+        for (const storage of this.#storage.values()) {
+            const component = storage.get(gameObject);
+            if (component) components.push(component);
+        }
+        return components;
+    }
     hasComponent<T extends Component>(gameObject: GameObject, type: ComponentConstructor<T>): boolean {
         const storage = this.#storage.get(type);
         if (!storage) {
@@ -69,10 +78,10 @@ export class Registry {
         const component = storage.get(gameObject);
         return !!component;
     }
-    query(typeArray: ComponentConstructor[], pool?: Set<GameObject>): GameObject[] {
+    query<const R extends readonly ComponentConstructor[]>(typeArray: R, pool?: Set<GameObject>): GameObject<Transform | InstanceType<R[number]>>[] {
         if (!pool) pool = this.#gameObjects;
         if (typeArray.length == 0) {
-            return Array.from(pool);
+            return Array.from(pool) as GameObject<any>[];
         }
 
         const intersection = new Set(pool);
@@ -91,6 +100,6 @@ export class Registry {
             }
         }
 
-        return Array.from(intersection);
+        return Array.from(intersection) as GameObject<any>[];
     }
 }

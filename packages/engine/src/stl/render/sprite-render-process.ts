@@ -16,9 +16,9 @@ export class SpriteRenderProcess extends Process {
             this.renderSprite(gameObject, ctx);
         }
     }
-    renderSprite(gameObject: GameObject, ctx: InstanceContext): void {
-        const spriteRenderer = gameObject.get(SpriteRenderer)!;
-        const transform = gameObject.get(Transform)!;
+    renderSprite(gameObject: GameObject<Transform | SpriteRenderer>, ctx: InstanceContext): void {
+        const spriteRenderer = gameObject.get(SpriteRenderer);
+        const transform = gameObject.get(Transform);
         const textureAlias = spriteRenderer.textureAlias;
 
         let sprite;

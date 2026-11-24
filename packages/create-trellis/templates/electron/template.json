@@ -1,0 +1,10 @@
+{
+  "title": "Electron + esbuild",
+  "description": "Desktop app. Reads and writes project files directly, so the scene editor works out of the box.",
+  "order": 2,
+  "nextSteps": [
+    "npm install",
+    "npm run dev      # build and launch the game",
+    "npm run editor   # launch the scene editor"
+  ]
+}

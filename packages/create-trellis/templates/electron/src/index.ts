@@ -1,36 +1,17 @@
-import {GameProfile, ResourceLoader, SceneLoader, SpriteRenderer} from "@wnuspl/trellis/stl";
-import {Blueprint, Profile, Transform} from "@wnuspl/trellis";
-import {EditorProfile} from "@wnuspl/trellis/editor";
-import {runGame} from "./game.js";
+import { ResourceLoader } from "@wnuspl/trellis/stl";
+import { startGame } from "./game.js";
 
+// File access goes through the preload bridge (see electron/preload.ts).
 const resourceLoader = new ResourceLoader({
-    read: async (path: string) => window.trellis.read(path),
-    write: async (path: string, data: string) => window.trellis.write(path, data),
+    read: (path) => window.trellis.read(path),
+    write: (path, data) => window.trellis.write(path, data),
 });
 
-const sceneLoader = new SceneLoader(resourceLoader);
+const assets = (await window.trellis.ls("assets")).map((fileName) => `assets/${fileName}`);
 
-const editor = false;
-
-const profile: Profile = (() => {
-    return editor
-        ? new EditorProfile({
-            mount: document.body,
-            sceneLoader,
-            scenePath: "scenes/main.json"
-        })
-        : new GameProfile({
-            mount: document.body,
-        });
-})();
-
-
-(async () => {
-    const assets = (await window.trellis.ls("assets"))
-        .map(fileName => `assets/${fileName}`);
-    console.log(assets);
-    profile.instance.config.assetFileNameList = assets;
-
-    runGame(profile, resourceLoader);
-})();
-
+await startGame({
+    mount: document.body,
+    resourceLoader,
+    assets,
+    editor: new URLSearchParams(location.search).has("editor"),
+});

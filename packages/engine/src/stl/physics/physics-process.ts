@@ -39,7 +39,7 @@ export class PhysicsProcess extends Process {
             this.#resolutionProcess.update(subCtx);
             for (const collisionEvent of subCtx.events.get(CollisionEvent)) {
                 const key = collisionKey(collisionEvent.a, collisionEvent.b);
-                if (collisionPairs.has(key)) return;
+                if (collisionPairs.has(key)) continue;
                 collisionPairs.add(key);
                 ctx.events.post(collisionEvent);
             }

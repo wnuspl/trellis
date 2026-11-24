@@ -1,24 +1,25 @@
 {
-  "name": "raw",
+  "name": "game",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build-tsc": "tsc --noEmit",
-    "build": "tsc --noEmit && node build.mjs",
-    "start": "npm run build && electron ."
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
   "type": "module",
-  "devDependencies": {
-    "@types/node": "^26.2.0",
-    "electron": "^43.4.1",
-    "esbuild": "^0.28.2",
-    "typescript": "^7.0.2"
+  "main": "dist/main.js",
+  "scripts": {
+    "postinstall": "install-electron",
+    "dev": "node build.mjs && electron .",
+    "editor": "node build.mjs && electron . --editor",
+    "watch": "node build.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && node build.mjs",
+    "start": "electron ."
   },
   "dependencies": {
-    "@wnuspl/trellis": "^0.1.0"
+    "@wnuspl/trellis": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "electron": "^45.4.1",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
   }
 }

@@ -6,7 +6,7 @@ import {SpriteRenderer} from "./sprite-renderer-component.js";
 export class SpriteAnimationProcess extends Process {
     update(ctx: InstanceContext) {
         for (const gameObject of ctx.scene.query([SpriteAnimation])) {
-            const spriteAnimation = gameObject.get(SpriteAnimation)!;
+            const spriteAnimation = gameObject.get(SpriteAnimation);
             const change = spriteAnimation.tick(ctx.dt);
             if (change) {
                 const spriteRenderer = gameObject.get(SpriteRenderer);

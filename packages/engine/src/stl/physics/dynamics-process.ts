@@ -9,8 +9,8 @@ export class DynamicsProcess extends Process {
         const gameObjects = ctx.scene.query([Transform, PhysicsBody]);
         for (let i=0; i<gameObjects.length; i++) {
             const gameObject = gameObjects[i]!;
-            const transform = gameObject.get(Transform)!;
-            const physicsBody = gameObject.get(PhysicsBody)!;
+            const transform = gameObject.get(Transform);
+            const physicsBody = gameObject.get(PhysicsBody);
 
             const dv = physicsBody.gravityScale*DynamicsProcess.GRAVITY_ACCELERATION*ctx.dt;
             physicsBody.velocity.y += dv;

@@ -109,3 +109,40 @@ set _notifyModification(callback: (() => void) | undefined) {
 }
 
 ```
+
+## saving with scenes
+
+To let scene files change a component, register it with the `SceneLoader` (see [scenes](scenes.md)):
+```ts
+sceneLoader.components({ Transform, CoinValue });
+```
+
+Without extra code, a component saves its public fields and any property with both a getter and a setter. Values like `Vector2` and plain objects inside it are saved too.
+```ts
+class CoinValue extends Component {
+    value = 10;          // saved
+    _cache = 0;          // not saved: starts with _
+    #owner = null;       // not saved: #private
+    get doubled() {      // not saved: no setter
+        return this.value * 2;
+    }
+}
+```
+
+When a scene loads, saved values are written into the component the blueprint added; the component is not replaced. Values the scene didn't change keep the blueprint's values, setters still run, and any reference to the component stays valid.
+
+### custom saving
+To choose what is saved, override `serialize` and `deserialize`. `deserialize` may receive only some of the fields, so leave the others alone:
+```ts
+class Health extends Component {
+    #current = 100;
+    max = 100;
+    serialize() {
+        return { current: this.#current, max: this.max };
+    }
+    deserialize(data: Record<string, unknown>) {
+        if (typeof data.current === "number") this.#current = data.current;
+        if (typeof data.max === "number") this.max = data.max;
+    }
+}
+```

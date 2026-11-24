@@ -34,7 +34,7 @@ export class PixiApplication {
         const centerY = this.#app.screen.height / 2;
 
         this.#world.x = centerX - this.camera.position.x * this.camera.zoom;
-        this.#world.y = centerY - this.camera.position.y * this.camera.zoom;
+        this.#world.y = centerY + this.camera.position.y * this.camera.zoom; // world space is y-up, render space is y-down
         this.#world.scale = this.camera.zoom;
     }
 

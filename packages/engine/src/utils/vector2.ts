@@ -1,4 +1,6 @@
-export type Vector2Unserialized = { _x: number; _y: number };
+export type Vector2Unserialized = { x: number; y: number };
+/** Shape written by scene files saved before Vector2 had toJSON. */
+type LegacyVector2Unserialized = { _x: number; _y: number };
 export class Vector2 {
     protected _x: number;
     protected _y: number;
@@ -18,8 +20,12 @@ export class Vector2 {
         this._x = x;
         this._y = y;
     }
-    static from(data: Vector2Unserialized): Vector2 {
-        return new Vector2(data._x, data._y);
+    static from(data: Vector2Unserialized | LegacyVector2Unserialized): Vector2 {
+        if ("_x" in data) return new Vector2(data._x, data._y);
+        return new Vector2(data.x, data.y);
+    }
+    toJSON(): Vector2Unserialized {
+        return { x: this.x, y: this.y };
     }
     plus(other: Vector2) {
         return new Vector2(this.x+other.x, this.y+other.y);

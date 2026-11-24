@@ -1,17 +1,11 @@
+import { Behavior, Blueprint, Vector2, type BehaviorContext, type Transform } from "@wnuspl/trellis";
 import {
-    Behavior,
-    Blueprint,
-    InstanceContext,
-    Transform,
-    Vector2,
-    Component, BehaviorContext,
-} from "@wnuspl/trellis";
-import {
-    CameraOperator,
     CircleCollider,
-    Collider, CollisionEvent, OnclickEvent,
+    Collider,
+    CollisionEvent,
     PhysicsBody,
-    SpriteRenderer, SpriteAnimation
+    SpriteRenderer,
+    SpriteAnimation,
 } from "@wnuspl/trellis/stl";
 
 
@@ -30,7 +24,6 @@ const PlayerAnimations = {
 }
 export const Player = new Blueprint(
     (gameObject) => {
-        gameObject.attach(PlayerController)
         gameObject
             .add(new SpriteAnimation(PlayerAnimations, "idle"))
             .add(new SpriteRenderer({
@@ -39,10 +32,11 @@ export const Player = new Blueprint(
             }))
             .add(new Collider(new CircleCollider(32)))
             .add(new PhysicsBody({ gravityScale: 0 }))
+            .attach(PlayerController)
     },
 )
 
-class PlayerController extends Behavior {
+class PlayerController extends Behavior<Transform | PhysicsBody | SpriteAnimation | SpriteRenderer> {
     speed: number = 5;
     update(ctx: BehaviorContext) {
         const direction  = new Vector2(0,0);
@@ -50,10 +44,10 @@ class PlayerController extends Behavior {
         if (ctx.input.isKeyHeld("KeyD")) direction.x += 1;
         if (ctx.input.isKeyHeld("KeyW")) direction.y += 1;
         if (ctx.input.isKeyHeld("KeyS")) direction.y -= 1;
-        this.gameObject.get(PhysicsBody)!.velocity = direction.normalized().scaled(this.speed);
+        this.gameObject.get(PhysicsBody).velocity = direction.normalized().scaled(this.speed);
 
-        const spriteAnimation = this.gameObject.get(SpriteAnimation)!;
-        const spriteRenderer = this.gameObject.get(SpriteRenderer)!;
+        const spriteAnimation = this.gameObject.get(SpriteAnimation);
+        const spriteRenderer = this.gameObject.get(SpriteRenderer);
 
         spriteAnimation.currentAnimation = (direction.magnitude() > 0) ? "run" : "idle";
         direction.x != 0 && (spriteRenderer.scale.x = Math.abs(spriteRenderer.scale.x) * direction.x);

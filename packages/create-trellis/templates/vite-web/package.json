@@ -1,21 +1,21 @@
 {
   "name": "game",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "file-server": "npx file-server",
-    "dev": "npx vite"
+    "dev": "vite",
+    "file-server": "file-server",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@wnuspl/trellis": "^0.1.0"
+    "@wnuspl/trellis": "^0.2.0"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
-    "typescript": "^5.5.3",
-    "vite": "^8.1.0"
-  },
-  "private": true
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
 }

@@ -4,9 +4,9 @@ import {TrackedVector2} from "../utils/tracked-vector2.js";
 import {markModification} from "../tracked.js";
 
 export type TransformUnserialized = {
-    position: Vector2Unserialized;
+    position: Partial<Vector2Unserialized>;
     rotation: number;
-    scale: Vector2Unserialized;
+    scale: Partial<Vector2Unserialized>;
 };
 
 export class Transform extends Component {
@@ -27,11 +27,11 @@ export class Transform extends Component {
         this.worldRotation = rotation?? 0;
         this.worldScale = scale ?? new Vector2(1,1);
     }
-    static from(data: TransformUnserialized) {
-        const position = Vector2.from(data.position);
-        const rotation = data.rotation ?? 0;
-        const scale = data.scale ? Vector2.from(data.scale) : new Vector2(1,1);
-        return new Transform(position, rotation, scale);
+    /** @deprecated Scene loading patches the existing Transform with deserialize(). */
+    static from(data: Partial<TransformUnserialized>) {
+        const transform = new Transform();
+        transform.deserialize(data);
+        return transform;
     }
     get position(): Vector2 {
         return this.#position;
@@ -58,19 +58,38 @@ export class Transform extends Component {
     }
     _reset() {
         this.#position._reset();
-        this.#position._reset();
+        this.#scale._reset();
         this._modified = false;
+    }
+    // A setter-only accessor would shadow Component's getter and make it
+    // return undefined, so rotation changes would never be reported.
+    get _notifyModification(): (() => void) | undefined {
+        return this._notifyModificationInternal;
     }
     set _notifyModification(callback: (() => void) | undefined) {
         this._notifyModificationInternal = callback;
         this.#position._notifyModification = callback;
         this.#scale._notifyModification = callback;
     }
-    toJSON() {
+    // Only local values are saved; world values are recomputed every frame.
+    serialize() {
         return {
-            position: <Vector2> this.#position,
+            position: this.#position.toJSON(),
             rotation: this.#rotation,
-            scale: <Vector2> this.#scale,
+            scale: this.#scale.toJSON(),
+        };
+    }
+    deserialize(data: Record<string, unknown>) {
+        const { position, rotation, scale, ...rest } = data as Partial<TransformUnserialized>;
+        for (const key of Object.keys(rest)) {
+            console.warn(`Transform has no serializable property "${key}" (ignoring)`);
         }
+        // Partial vectors keep the other axis, so {x: 5} only moves x.
+        if (position) this.position = new Vector2(position.x ?? this.#position.x, position.y ?? this.#position.y);
+        if (typeof rotation === "number") this.rotation = rotation;
+        if (scale) this.scale = new Vector2(scale.x ?? this.#scale.x, scale.y ?? this.#scale.y);
+    }
+    toJSON() {
+        return this.serialize();
     }
 }

@@ -20,4 +20,4 @@ As of 8.14
 
 # template
 - Make electron-vite version
-- Make script allow you to choose platform
+- ~~Make script allow you to choose platform~~ (done: --template)
