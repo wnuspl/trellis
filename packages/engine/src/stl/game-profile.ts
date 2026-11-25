@@ -1,5 +1,5 @@
 import {Profile} from "../instance/index.js";
-import {CreateProcess, DestroyProcess, SceneTransferProcess, Transform, TransformProcess} from "../core/index.js";
+import {BroadcastProcess, CreateProcess, DestroyProcess, SceneTransferProcess, Transform, TransformProcess} from "../core/index.js";
 import {Collider, OnclickProcess, PhysicsBody, PhysicsProcess} from "./physics/index.js";
 import {SpriteAnimationProcess, SpriteRenderer, SpriteRenderProcess} from "./render/index.js";
 import {CameraOperator, CameraProcess } from "./camera/index.js";
@@ -13,6 +13,7 @@ export class GameProfile extends Profile {
         instance.registerProcess(SceneTransferProcess);
         instance.registerProcess(DestroyProcess);
         instance.registerProcess(CreateProcess);
+        instance.registerProcess(BroadcastProcess);
         instance.registerProcess(PhysicsProcess);
         instance.registerProcess(TransformProcess);
         instance.registerProcess(CameraProcess)

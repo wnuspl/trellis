@@ -4,6 +4,7 @@ import {FrameEvent} from "../../events.js";
 import type {MouseButton} from "../../input/input-system.js";
 import {AABBCollider, CircleCollider, Collider, ColliderShape} from "./collider-component.js";
 import {Transform} from "../../core/index.js";
+import type {BehaviorContext} from "../../model/behavior.js";
 
 export class OnclickEvent extends FrameEvent {
     involvedGameObjects: Set<GameObject>;
@@ -16,7 +17,7 @@ export class OnclickEvent extends FrameEvent {
     gameObject() {
         return this.involvedGameObjects.values().next().value!;
     }
-    static wasClicked(target: GameObject, ctx: InstanceContext, button: MouseButton) {
+    static wasClicked(target: GameObject, ctx: InstanceContext | BehaviorContext, button: MouseButton) {
         for (const clickEvent of ctx.events.getFor(OnclickEvent, target)) {
             if (clickEvent.button === button) return true;
         }

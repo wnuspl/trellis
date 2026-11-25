@@ -30,6 +30,7 @@ export class Instance {
         this.systems.sceneManager.setScene("default")
         this.#context = {
             dt: 0,
+            rawDt: 0,
             scene: this.systems.sceneManager.current,
             input: new DOMInput(),
             events: new FrameEventStore(),
@@ -82,7 +83,8 @@ export class Instance {
     #updateGlobal(dt: number) {
         this.#context = {
             ...this.#context,
-            dt,
+            rawDt: dt,
+            dt: dt*this.config.timeScale,
             scene: this.#systems.sceneManager.current,
         }
         this.#context.scene = this.#systems.sceneManager.current;

@@ -7,6 +7,7 @@ import {GameObject, type ReadonlyFrameChanges} from "../model/index.js";
 
 export type InstanceContext = {
     dt: number;
+    rawDt: number;
     scene: Scene;
     input: InputSystem;
     events: FrameEventStore;
