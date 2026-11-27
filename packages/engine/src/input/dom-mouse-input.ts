@@ -1,11 +1,18 @@
 import {Vector2} from "../utils/index.js";
 import type {MouseButton} from "./input-system.js";
 
-const mouseButtonMap: Map<number, MouseButton> = new Map([
-    [0, "left"],
-    [1, "middle"],
+// PointerEvent.buttons is a bitmask of the buttons held right now.
+const buttonBits: [number, MouseButton][] = [
+    [1, "left"],
     [2, "right"],
-]);
+    [4, "middle"],
+];
+
+/**
+ * Mouse, touch and pen through Pointer Events. A touch or pen contact counts
+ * as the "left" button; only the primary pointer (the mouse, or the first
+ * finger down) is tracked.
+ */
 export class DomMouseInput {
     #mouseUpQueue: Set<MouseButton>;
     #mouseDownQueue: Set<MouseButton>;
@@ -14,6 +21,7 @@ export class DomMouseInput {
     #mouseHeld: Set<MouseButton>;
     #screenPosition: Vector2 | null;
     #mount: HTMLElement | null = null;
+    #buttons = 0;
     constructor() {
         this.#mouseUpQueue = new Set();
         this.#mouseDownQueue = new Set();
@@ -24,22 +32,46 @@ export class DomMouseInput {
     }
     init(mount: HTMLElement) {
         this.#mount = mount;
-        mount.addEventListener("mousedown", (e) => {
-            this.#mouseDownQueue.add(mouseButtonMap.get(e.button)!);
+        // Without this, touch drags scroll or zoom the page and fire pointercancel.
+        mount.style.touchAction = "none";
+
+        mount.addEventListener("pointerdown", (e) => {
+            if (!e.isPrimary) return;
+            // Keep receiving moves and the release even if the pointer leaves the element.
+            mount.setPointerCapture(e.pointerId);
+            this.#handle(e, e.buttons);
             e.preventDefault();
         });
-        mount.addEventListener("mouseup", (e) => {
-            this.#mouseUpQueue.add(mouseButtonMap.get(e.button)!);
+        mount.addEventListener("pointermove", (e) => {
+            if (!e.isPrimary) return;
+            // Pressing a second mouse button while one is held fires pointermove, not pointerdown.
+            this.#handle(e, e.buttons);
             e.preventDefault();
         });
-        mount.addEventListener("mousemove", (e) => {
+        mount.addEventListener("pointerup", (e) => {
+            if (!e.isPrimary) return;
+            this.#handle(e, e.buttons);
+            e.preventDefault();
+        });
+        // The browser took the pointer away (e.g. a system gesture): treat it as a release.
+        mount.addEventListener("pointercancel", (e) => {
+            if (!e.isPrimary) return;
+            this.#handle(e, 0);
+        });
+        mount.addEventListener("pointerenter", (e) => {
+            if (!e.isPrimary) return;
             this.#screenPosition = this.toScreenPosition(e.clientX, e.clientY);
-            e.preventDefault();
-        })
-        mount.addEventListener("mouseenter", (e) => {
-            this.#screenPosition = this.toScreenPosition(e.clientX, e.clientY);
-            e.preventDefault();
         });
+    }
+    #handle(e: PointerEvent, buttons: number) {
+        this.#screenPosition = this.toScreenPosition(e.clientX, e.clientY);
+        const pressed = buttons & ~this.#buttons;
+        const released = this.#buttons & ~buttons;
+        for (const [bit, button] of buttonBits) {
+            if (pressed & bit) this.#mouseDownQueue.add(button);
+            if (released & bit) this.#mouseUpQueue.add(button);
+        }
+        this.#buttons = buttons;
     }
     toScreenPosition(offsetX: number, offsetY: number) {
         if (this.#mount == null) throw new Error("Tried toScreenPosition before initialization");
