@@ -29,6 +29,17 @@ export class GameObject<in C extends Component = Transform> {
         this.#registry.addComponent(this as GameObject<any>, component);
         return this as GameObject<C | T>;
     }
+    /**
+     * Narrows the type to include T, throwing if the object doesn't have it.
+     * Use where the component set was lost, e.g. `onInit` callbacks or query results:
+     * `gameObject.expect(SpriteRenderer).attach(...)`.
+     */
+    expect<T extends Component>(type: ComponentConstructor<T>): GameObject<C | T> {
+        if (!this.get(type)) {
+            throw new Error(`Game Object ${this.uuid.id} has no ${type.name}`);
+        }
+        return this as GameObject<C | T>;
+    }
     // `this: GameObject<N>` only matches if the object already has every component N needs.
     attach<T extends Behavior<N>, N extends Component>(
         this: GameObject<NoInfer<N>>,
