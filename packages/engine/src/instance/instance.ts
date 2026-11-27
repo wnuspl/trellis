@@ -89,6 +89,8 @@ export class Instance {
         }
         this.#context.scene = this.#systems.sceneManager.current;
 
+        // Before processes, so the first rendered frame reflects what init() set up.
+        this.#initBehaviors(this.#context);
         this.#updateProcesses(this.#context);
 
         for (const [gameObject, componentTypes] of this.#context.changes.modifiedGameObjects.entries()) {
@@ -114,10 +116,19 @@ export class Instance {
             ctx.scene = this.#systems.sceneManager.current;
         }
     }
+    #initBehaviors(ctx: InstanceContext) {
+        for (const gameObject of ctx.scene.query([])) {
+            for (const behavior of gameObject.behaviors) {
+                behavior._initOnce(ctx);
+            }
+        }
+    }
     #updateBehaviors(ctx: InstanceContext) {
         const gameObjects = this.#context.scene.query([]);
         for (const gameObject of gameObjects) {
             for (const behavior of gameObject.behaviors) {
+                // Covers objects a process created earlier this frame (e.g. CreateProcess).
+                behavior._initOnce(ctx);
                 behavior.update(ctx);
             }
         }

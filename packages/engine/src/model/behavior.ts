@@ -26,16 +26,20 @@ export type BehaviorContext = {
 }
 
 export abstract class Behavior<C extends Component = Transform> {
-    /** Components that must be on the object before attach(). Checked at runtime. */
     static readonly requires: readonly ComponentConstructor[] = [];
     #gameObject: GameObject<C>;
+    #initialized = false;
     constructor(gameObject: GameObject<C>) {
         this.#gameObject = gameObject;
-        this.init();
     }
     get gameObject() {
         return this.#gameObject;
     }
+    _initOnce(ctx: BehaviorContext) {
+        if (this.#initialized) return;
+        this.#initialized = true;
+        this.init(ctx);
+    }
     update(ctx: BehaviorContext): void {}
-    init(): void {}
+    init(ctx: BehaviorContext): void {}
 }

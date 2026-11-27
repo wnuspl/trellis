@@ -8,10 +8,12 @@ import type {SceneTransferRequest} from "./scene-transfer-process.js";
 export class CreateRequest extends FrameRequest {
     blueprint: Blueprint;
     parent: GameObject | undefined;
-    constructor(blueprint: Blueprint, parent?: GameObject) {
+    onInit: ((gameObject: GameObject) => void) | undefined;
+    constructor(blueprint: Blueprint, parent?: GameObject, onInit?: (gameObject: GameObject) => void) {
         super();
         this.blueprint = blueprint;
         this.parent = parent;
+        this.onInit = onInit;
     }
     static post(ctx: SceneTransferRequest,) {}
 }
@@ -19,7 +21,10 @@ export class CreateRequest extends FrameRequest {
 export class CreateProcess extends Process {
     update(ctx: InstanceContext) {
         for (const createRequest of ctx.requests.get(CreateRequest)) {
-            ctx.scene.build(createRequest.blueprint, createRequest.parent);
+            const gameObject = ctx.scene.build(createRequest.blueprint, createRequest.parent);
+            if (createRequest.onInit) {
+                createRequest.onInit(gameObject);
+            }
         }
     }
 }
