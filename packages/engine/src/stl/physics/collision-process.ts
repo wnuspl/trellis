@@ -1,7 +1,7 @@
 import {Vector2} from "../../utils/index.js";
 import type {InstanceContext} from "../../instance/index.js";
 import {Transform} from "../../core/index.js";
-import {AABBCollider, CircleCollider, Collider, ColliderShape} from "./collider-component.js";
+import {BoxCollider, CircleCollider, Collider, ColliderShape} from "./collider-component.js";
 import {GameObject, Process} from "../../model/index.js";
 import {FrameEvent} from "../../events.js";
 import type {BehaviorContext} from "../../model/behavior.js";
@@ -76,17 +76,17 @@ export class CollisionProcess extends Process {
             if (b.colliderShape instanceof CircleCollider) {
                 manifold = CollisionProcess.CircleCircle(a,b);
             }
-            if (b.colliderShape instanceof AABBCollider) {
-                manifold = CollisionProcess.CircleAABB(a,b);
+            if (b.colliderShape instanceof BoxCollider) {
+                manifold = CollisionProcess.CircleBox(a,b);
             }
         }
-        if (a.colliderShape instanceof AABBCollider) {
+        if (a.colliderShape instanceof BoxCollider) {
             if (b.colliderShape instanceof CircleCollider) {
-                manifold = CollisionProcess.CircleAABB(b,a);
+                manifold = CollisionProcess.CircleBox(b,a);
                 flipped = true;
             }
-            if (b.colliderShape instanceof AABBCollider) {
-                manifold = CollisionProcess.AABBAABB(a,b);
+            if (b.colliderShape instanceof BoxCollider) {
+                manifold = CollisionProcess.BoxBox(a,b);
             }
         }
         if (!manifold) throw new Error(
@@ -109,85 +109,91 @@ export class CollisionProcess extends Process {
             penetration
         };
     }
-    static CircleAABB(a: CollisionObject, b: CollisionObject) {
+    static CircleBox(a: CollisionObject, b: CollisionObject) {
         const circle = a.colliderShape as CircleCollider;
-        const aabb = b.colliderShape as AABBCollider;
+        const box = b.colliderShape as BoxCollider;
 
-        const half = aabb.dim.scaled(0.5);
-        const min = b.transform.worldPosition.minus(half);
-        const max = b.transform.worldPosition.plus(half);
+        // Work in the box's local frame, where it is axis-aligned and centered at the origin.
+        const center = box.toLocal(a.transform.worldPosition.minus(b.transform.worldPosition));
+        const half = box.dim.scaled(0.5);
 
         const closest = new Vector2(
-            Math.max(min.x, Math.min(a.transform.worldPosition.x, max.x)),
-            Math.max(min.y, Math.min(a.transform.worldPosition.y, max.y))
+            Math.max(-half.x, Math.min(center.x, half.x)),
+            Math.max(-half.y, Math.min(center.y, half.y))
         );
 
-        const diff = closest.minus(a.transform.worldPosition);
+        const diff = closest.minus(center);
         const distance = diff.magnitude();
 
-        // Circle center is inside the AABB.
+        // Circle center is inside the box: push out through the nearest side.
         if (distance === 0) {
-            let diff;
-            const left = a.transform.worldPosition.x - min.x;
-            const right = max.x - a.transform.worldPosition.x;
-            const bottom = a.transform.worldPosition.y - min.y;
-            const top = max.y - a.transform.worldPosition.y;
+            let normal;
+            const left = center.x + half.x;
+            const right = half.x - center.x;
+            const bottom = center.y + half.y;
+            const top = half.y - center.y;
 
             const minDist = Math.min(left, right, bottom, top);
 
             if (minDist === left) {
-                diff = new Vector2(1, 0);
+                normal = new Vector2(1, 0);
             } else if (minDist === right) {
-                diff = new Vector2(-1, 0);
+                normal = new Vector2(-1, 0);
             } else if (minDist === bottom) {
-                diff = new Vector2(0, 1);
+                normal = new Vector2(0, 1);
             } else {
-                diff = new Vector2(0, -1);
+                normal = new Vector2(0, -1);
             }
 
             return {
                 isCollision: true,
-                normal: diff,
+                normal: box.toWorld(normal),
                 penetration: circle.radius + minDist
             };
         }
 
         return {
             isCollision: distance < circle.radius,
-            normal: diff.normalized(),
+            normal: box.toWorld(diff.normalized()),
             penetration: circle.radius - distance
         };
     }
-    static AABBAABB(a: CollisionObject, b: CollisionObject) {
-        const aabbA = a.colliderShape as AABBCollider;
-        const aabbB = b.colliderShape as AABBCollider;
+    /** Separating axis test on the 4 edge directions of two (possibly rotated) boxes. */
+    static BoxBox(a: CollisionObject, b: CollisionObject) {
+        const boxA = a.colliderShape as BoxCollider;
+        const boxB = b.colliderShape as BoxCollider;
+        const halfA = boxA.dim.scaled(0.5);
+        const halfB = boxB.dim.scaled(0.5);
+        const [ax, ay] = boxA.axes();
+        const [bx, by] = boxB.axes();
 
         const diff = b.transform.worldPosition.minus(a.transform.worldPosition);
 
-        // Overlap on each axis = sum of half extents minus center distance.
-        const overlapX = (aabbA.dim.x + aabbB.dim.x) * 0.5 - Math.abs(diff.x);
-        const overlapY = (aabbA.dim.y + aabbB.dim.y) * 0.5 - Math.abs(diff.y);
-
-        if (overlapX <= 0 || overlapY <= 0) {
-            return {
-                isCollision: false,
-                normal: new Vector2(0, 0),
-                penetration: 0
-            };
-        }
-
-        // Resolve along the axis of least penetration; normal points from a to b.
-        if (overlapX < overlapY) {
-            return {
-                isCollision: true,
-                normal: new Vector2(diff.x < 0 ? -1 : 1, 0),
-                penetration: overlapX
-            };
+        let penetration = Infinity;
+        let normal = new Vector2(0, 0);
+        for (const axis of [ax, ay, bx, by]) {
+            // Half the length of each box's shadow on this axis.
+            const radiusA = halfA.x * Math.abs(axis.dot(ax)) + halfA.y * Math.abs(axis.dot(ay));
+            const radiusB = halfB.x * Math.abs(axis.dot(bx)) + halfB.y * Math.abs(axis.dot(by));
+            const distance = diff.dot(axis);
+            const overlap = radiusA + radiusB - Math.abs(distance);
+            if (overlap <= 0) {
+                return {
+                    isCollision: false,
+                    normal: new Vector2(0, 0),
+                    penetration: 0
+                };
+            }
+            // Resolve along the axis of least penetration; normal points from a to b.
+            if (overlap < penetration) {
+                penetration = overlap;
+                normal = distance < 0 ? axis.scaled(-1) : axis;
+            }
         }
         return {
             isCollision: true,
-            normal: new Vector2(0, diff.y < 0 ? -1 : 1),
-            penetration: overlapY
+            normal,
+            penetration
         };
     }
 }

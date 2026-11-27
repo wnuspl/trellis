@@ -2,7 +2,7 @@ import {GameObject, Process} from "../../model/index.js";
 import type {InstanceContext} from "../../instance/index.js";
 import {FrameEvent} from "../../events.js";
 import type {MouseButton} from "../../input/input-system.js";
-import {AABBCollider, CircleCollider, Collider, ColliderShape} from "./collider-component.js";
+import {BoxCollider, CircleCollider, Collider, ColliderShape} from "./collider-component.js";
 import {Transform} from "../../core/index.js";
 import type {BehaviorContext} from "../../model/behavior.js";
 
@@ -48,9 +48,9 @@ export class OnclickProcess extends Process {
                     }
                 }
             }
-            if (colliderWorldShape instanceof AABBCollider) {
+            if (colliderWorldShape instanceof BoxCollider) {
                 const halfDim = colliderWorldShape.dim.scaled(0.5);
-                const relative = mouseWorldPosition.minus(transform.worldPosition);
+                const relative = colliderWorldShape.toLocal(mouseWorldPosition.minus(transform.worldPosition));
 
                 if (Math.abs(relative.x) < halfDim.x && Math.abs(relative.y) < halfDim.y) {
                     for (const button of buttons) {
