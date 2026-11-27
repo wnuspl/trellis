@@ -118,6 +118,6 @@ class DotProcess extends Process {
 ```
 
 Register it after `CameraProcess`. Three things to keep in mind:
-- Flip `y` (and negate rotation) when going from world space to Pixi.
+- Flip `y` when going from world space to Pixi. Pass rotation through unchanged: the engine's own sprites do, so positive rotation turns things clockwise on screen.
 - Clean up when objects are destroyed. Switching scenes destroys every object, so check `ctx.changes.destroyedGameObjects` or drop anything you didn't see this frame.
 - Use the same `pixi.js` package as the engine (see [processes](processes.md#drawing-your-own-things)).

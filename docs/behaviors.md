@@ -55,18 +55,20 @@ gameObject.attach(PlayerController, { speed: 10 });
 
 ## init
 
-`init()` is called by `Behavior`'s own constructor, which runs **before** your subclass's fields and constructor body. Inside `init()`, your fields still have no values and your config hasn't been stored:
+`init(ctx)` runs once, before the behavior's first `update`. By then your fields and config are set, values from the scene file have been applied, and a `CreateRequest`'s `onInit` callback has run, so it's the place for setup that reads component values:
 
 ```ts
-class Broken extends Behavior {
-    speed = 10;
-    init() {
-        console.log(this.speed); // undefined
+class PlanetLook extends Behavior<Transform | PlanetState | SpriteRenderer> {
+    init(ctx: BehaviorContext) {
+        const { color } = this.gameObject.get(PlanetState); // the scene file's value
+        this.gameObject.get(SpriteRenderer).textureAlias = `planet_${color}.png`;
     }
 }
 ```
 
-Do setup in your constructor after `super(...)`, or on the first `update`. Also, when a scene is loaded from a file, the saved values aren't applied to components until after behaviors are constructed. Read component values in `update`, not during construction (see [scenes](scenes.md#limits)).
+It gets the same `ctx` as `update`. Most behaviors run `init` at the start of the frame after they're attached, before processes, so the first frame drawn already shows what `init` set up. Behaviors created by a process that frame (e.g. from a `CreateRequest`) run `init` just before their first `update` instead.
+
+Don't read component values in the constructor: it runs while the blueprint builds, before scene values are applied (see [scenes](scenes.md#limits)).
 
 ## knowing which components an object has
 

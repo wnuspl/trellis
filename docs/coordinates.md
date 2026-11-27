@@ -20,7 +20,9 @@ Every object has a `Transform`:
 
 Objects built directly into a scene have the scene's root as their parent, so for them local and world are the same. For a [blueprint child](blueprints.md#children), `position` is an offset from its parent.
 
-A child's position is scaled by its parent's scale but **not rotated** by its parent's rotation. Rotating a parent doesn't swing its children around it.
+A child's position is scaled by its parent's scale, then rotated by its parent's rotation. Rotating a parent swings its children around it, and a child's `worldRotation` is its own rotation plus its parent's.
+
+Scaling happens before rotation, so a parent with different x and y scale that is also rotated doesn't skew its children: each child keeps its own shape.
 
 `worldPosition` is only updated when `TransformProcess` runs. If you move a parent in a behavior, its children's `worldPosition` is out of date until next frame.
 

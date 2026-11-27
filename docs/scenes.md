@@ -100,4 +100,4 @@ If a scene changes something that no longer exists (a child you renamed, a compo
 ## limits
 
 - Scenes can change component values, not which components or children an object has. Adding or removing components or blueprint children in a scene isn't saved yet.
-- Behaviors are constructed while the blueprint builds, before the scene's changes are applied. Read component values in `update`, not in a behavior's constructor.
+- Behaviors are constructed while the blueprint builds, before the scene's changes are applied. Read component values in `init` or `update`, not in a behavior's constructor.

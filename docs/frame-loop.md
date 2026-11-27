@@ -4,30 +4,32 @@ Every frame, Trellis runs your processes, then your behaviors. Knowing the order
 
 ## one frame
 
-1. **Processes** run, one after another, in the order they were registered.
-2. Change tracking resets (see [frame changes](#frame-changes)).
-3. Requests are cleared.
-4. **Behaviors** run: every behavior on every object in the current scene, in the order the objects were created.
-5. Events are cleared.
-6. Input updates: keys and mouse buttons pressed since the last frame become "down" for the next one.
+1. New behaviors run `init` (see [behaviors](behaviors.md#init)).
+2. **Processes** run, one after another, in the order they were registered.
+3. Change tracking resets (see [frame changes](#frame-changes)).
+4. Requests are cleared.
+5. **Behaviors** run (any that missed step 1 run `init` first): every behavior on every object in the current scene, in the order the objects were created.
+6. Events are cleared.
+7. Input updates: keys and mouse buttons pressed since the last frame become "down" for the next one.
 
-With `GameProfile`, step 1 is:
+With `GameProfile`, step 2 is:
 
 | order | process | what it does |
 |---|---|---|
 | 1 | `SceneTransferProcess` | Switches scene if a behavior asked to last frame |
 | 2 | `DestroyProcess` | Destroys objects behaviors asked to destroy last frame |
 | 3 | `CreateProcess` | Builds blueprints behaviors asked to create last frame |
-| 4 | `PhysicsProcess` | Moves physics bodies, detects collisions, posts `CollisionEvent`s |
-| 5 | `TransformProcess` | Works out world positions from parent/child transforms |
-| 6 | `CameraProcess` | Moves the camera to the first `CameraOperator` |
-| 7 | `SpriteAnimationProcess` | Advances sprite animations |
-| 8 | `SpriteRenderProcess` | Draws sprites |
-| 9 | `OnclickProcess` | Posts `OnclickEvent`s for objects under a mouse click |
+| 4 | `BroadcastProcess` | Delivers `Broadcast`s behaviors posted last frame, as events |
+| 5 | `PhysicsProcess` | Moves physics bodies, detects collisions, posts `CollisionEvent`s |
+| 6 | `TransformProcess` | Works out world positions from parent/child transforms |
+| 7 | `CameraProcess` | Moves the camera to the first `CameraOperator` |
+| 8 | `SpriteAnimationProcess` | Advances sprite animations |
+| 9 | `SpriteRenderProcess` | Draws sprites |
+| 10 | `OnclickProcess` | Posts `OnclickEvent`s for objects under a mouse click |
 
 ## what that means in practice
 
-- **Requests take one frame.** A behavior that posts a `DestroyRequest`, `CreateRequest` or `SceneTransferRequest` sees no change for the rest of that frame. It happens at the start of the next one. See [requests and events](requests-and-events.md).
+- **Requests take one frame.** A behavior that posts a `DestroyRequest`, `CreateRequest`, `SceneTransferRequest` or `Broadcast` sees no change for the rest of that frame. It happens at the start of the next one. See [requests and events](requests-and-events.md).
 - **Events reach behaviors the same frame.** A `CollisionEvent` posted by physics is readable by every behavior that frame, then it's gone.
 - **What a behavior changes is drawn next frame.** Behaviors run after rendering, so moving an object in a behavior shows up on screen one frame later. This is invisible in practice, but it matters if you compare positions against what was drawn.
 - **Input is one frame behind the browser.** A key pressed between two frames is "down" for exactly one frame of behaviors.

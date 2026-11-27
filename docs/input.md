@@ -42,6 +42,8 @@ const mouseWorld = ctx.camera.toWorldPosition(ctx.input.mouseScreenPosition());
 
 Buttons are `"left"`, `"middle"` and `"right"`.
 
+Touch and pen work through the same methods: a finger or pen contact is the `"left"` button, and `mouseScreenPosition()` follows it. Only the first finger down is tracked; extra fingers are ignored. A drag keeps reporting moves and its release even if it leaves the game's element.
+
 `mouseScreenPosition()` is in pixels from the **center** of the game's element, **y up**. Convert it with `ctx.camera.toWorldPosition(...)` to compare it with objects (see [coordinates](coordinates.md#screen-and-mouse)).
 
 To react to clicks on a specific object, give it a `Collider` and use [`OnclickEvent`](requests-and-events.md#onclickevent).
@@ -55,4 +57,5 @@ To react to clicks on a specific object, give it a `Collider` and use [`OnclickE
   ```
 - Input listens on the element the game is mounted on. Keys only arrive while that element (or something inside it) has focus. Mounting on `document.body` is the simplest way to always get them.
 - Every key's browser default is blocked while the game has focus (`preventDefault`), including shortcuts such as F5 and Ctrl+R.
-- There's no gamepad or touch input yet.
+- The game's element gets `touch-action: none`, so touches on it don't scroll or zoom the page.
+- There's no multi-touch or gamepad input yet.

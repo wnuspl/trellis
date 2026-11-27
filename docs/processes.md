@@ -62,7 +62,7 @@ A `Profile` sets up an instance: which components exist, which processes run. `G
 To add your own processes, write a profile. Register your components and processes before calling `super.init()`:
 
 ```ts
-import { CreateProcess, DestroyProcess, Profile, SceneTransferProcess, Transform, TransformProcess } from "@wnuspl/trellis";
+import { BroadcastProcess, CreateProcess, DestroyProcess, Profile, SceneTransferProcess, Transform, TransformProcess } from "@wnuspl/trellis";
 import { CameraOperator, CameraProcess, SpriteAnimationProcess, SpriteRenderer, SpriteRenderProcess } from "@wnuspl/trellis/stl";
 
 class MyProfile extends Profile {
@@ -73,6 +73,7 @@ class MyProfile extends Profile {
         instance.registerProcess(SceneTransferProcess);
         instance.registerProcess(DestroyProcess);
         instance.registerProcess(CreateProcess);
+        instance.registerProcess(BroadcastProcess);
         instance.registerProcess(SpinProcess);        // ours, before transforms are resolved
         instance.registerProcess(TransformProcess);
         instance.registerProcess(CameraProcess);

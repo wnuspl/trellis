@@ -1,13 +1,14 @@
 # requests and events
 
-Behaviors and processes don't call each other. They talk through two short-lived messages:
+Behaviors and processes don't call each other. They talk through short-lived messages:
 
 | | sent by | read by | lives for |
 |---|---|---|---|
 | **request** | behaviors | processes | until processes run, at the start of the next frame |
 | **event** | processes | behaviors and later processes | the rest of the current frame |
+| **broadcast** | behaviors | behaviors and processes | the next frame, as an event |
 
-A request is "please do this" (destroy this object, switch scenes). An event is "this happened" (these two objects collided, this object was clicked).
+A request is "please do this" (destroy this object, switch scenes). An event is "this happened" (these two objects collided, this object was clicked). A broadcast is a behavior telling every other behavior something (shake the screen, the boss died).
 
 ## built-in requests
 
@@ -121,7 +122,61 @@ new DamageEvent(enemy, 10).post(ctx);
 for (const hit of ctx.events.getFor(DamageEvent, this.gameObject)) { /* ... */ }
 ```
 
-Behaviors can't post events. Their `ctx.events` is read-only. To get from a behavior to an event, post a request and have a process turn it into an event.
+Behaviors can't post events. Their `ctx.events` is read-only. To get from a behavior to an event, post a [broadcast](#broadcasts), or post a request and have a process turn it into an event.
+
+## broadcasts
+
+A `Broadcast` lets one behavior tell others something without reaching into their objects. Subclass it to give it data, then post it from a behavior:
+
+```ts
+import { Broadcast } from "@wnuspl/trellis";
+
+class Shake extends Broadcast {
+    constructor(public amount: number) { super(); }
+}
+
+// in the behavior that wants the screen to shake
+new Shake(6).post(ctx);
+
+// in the camera's behavior, next frame
+for (const shake of ctx.events.get(Shake)) {
+    this.shake = Math.max(this.shake, shake.amount);
+}
+```
+
+A broadcast is an event, so it's read the same way. `BroadcastProcess` delivers it at the start of the next frame, after objects are created and destroyed, and every behavior and later process can read it for that frame.
+
+### when to use one
+
+If you already have the object you want to affect, call it: `enemy.get(Health)!.damage(8)` happens right away, with no frame of delay. Broadcast when you'd otherwise have to go find whoever cares, or when several things might: the camera and a sound player both reacting to an explosion, the HUD and a score counter both reacting to a kill.
+
+### broadcasts about an object
+
+A broadcast can say which objects it's about. Fill in `involvedGameObjects`, and a reader that's watching one particular object can pick out just the broadcasts about it with `getFor`:
+
+```ts
+class Died extends Broadcast {
+    constructor(who: GameObject) {
+        super();
+        this.involvedGameObjects = new Set([who]);
+    }
+}
+
+// in any enemy's behavior, as it dies. It doesn't know who's watching.
+new Died(this.gameObject).post(ctx);
+
+// in a boss health bar, which only cares about its boss
+if (ctx.events.getFor(Died, this.boss).length > 0) { /* hide the bar */ }
+
+// in a kill counter, which cares about every death
+this.kills += ctx.events.get(Died).length;
+```
+
+- **Send values, not live state.** It's read a frame later, so pass `position.clone()` rather than `position`.
+- **Objects you send may be gone.** An object can be destroyed between the post and the read.
+- **Don't change a broadcast after posting it.** Every reader gets the same one.
+- **Post them from behaviors.** A process should post an ordinary event instead.
+- **Profiles:** `GameProfile` and `EditorProfile` register `BroadcastProcess`. A custom profile must register it, after `CreateProcess` (see [processes](processes.md#profiles)).
 
 ## limits
 

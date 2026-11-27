@@ -25,3 +25,5 @@ Thumbs.db
 
 packages/test
 packages/raw-electron
+
+examples/

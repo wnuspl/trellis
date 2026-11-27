@@ -21,3 +21,12 @@ As of 8.14
 # template
 - Make electron-vite version
 - ~~Make script allow you to choose platform~~ (done: --template)
+
+
+# next steps
+- read through the rest of these
+- text! (some way to support custom fonts like in alien game)
+- particles?
+- audio
+- properly synced scene loading
+- export scene
