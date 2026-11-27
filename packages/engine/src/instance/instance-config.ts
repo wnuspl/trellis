@@ -1,25 +1,22 @@
 import {Vector2} from "../utils/index.js";
+import {Viewport} from "../pixijs/viewport.js";
 
-export type ViewportConfig = {
-    size: Vector2,
-    mode: "fit"
-}
 
 export type InstanceConfig = {
     assetFileNameList: string[],
     backgroundColor: string,
-    viewportConfig: ViewportConfig,
+    viewportConfig: Viewport,
     timeScale: number
 };
 
-export const DefaultViewportConfig: ViewportConfig = {
-    size: new Vector2(1080, 720),
-    mode: "fit",
-}
+export const DefaultViewport: Viewport = new Viewport(
+    new Vector2(1080, 720),
+    "fit"
+);
 
 export const DefaultInstanceConfig = {
     assetFileNameList: [],
     backgroundColor: "#20202e",
-    viewportConfig: DefaultViewportConfig,
+    viewportConfig: DefaultViewport,
     timeScale: 1,
 };

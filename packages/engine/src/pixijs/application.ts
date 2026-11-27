@@ -2,14 +2,15 @@ import {Application, Assets, Sprite, type Renderer, Container} from 'pixi.js';
 import {WorldSprite} from "./world-sprite.js";
 import {Camera} from "./camera.js";
 import {Vector2} from "../utils/index.js";
-import {DefaultViewportConfig, type ViewportConfig} from "../instance/instance-config.js";
+import type {Viewport} from "./viewport.js";
+import {DefaultViewport} from "../instance/instance-config.js";
 
 export class PixiApplication {
     #app: Application<Renderer> | null;
     #world: Container;
     camera: Camera;
     backgroundColor: string = "#4e4e5e";
-    viewportConfig: ViewportConfig = DefaultViewportConfig;
+    viewport: Viewport = DefaultViewport;
     #isInitializing: boolean;
     constructor() {
         this.#app = null;
@@ -40,9 +41,10 @@ export class PixiApplication {
         const centerX = this.#app.screen.width / 2;
         const centerY = this.#app.screen.height / 2;
 
-        const scaleX = this.#app.screen.width / this.viewportConfig.size.x;
-        const scaleY = this.#app.screen.height / this.viewportConfig.size.y;
-        this.camera.baseScale = Math.min(scaleX, scaleY);
+        this.camera.baseScale = this.viewport.scale(
+            this.#app.screen.width,
+            this.#app.screen.height
+        );
 
         this.#world.x = centerX - this.camera.position.x * this.camera.zoom;
         this.#world.y = centerY + this.camera.position.y * this.camera.zoom; // world space is y-up, render space is y-down
