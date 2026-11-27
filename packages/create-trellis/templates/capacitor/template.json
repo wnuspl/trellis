@@ -1,0 +1,12 @@
+{
+  "title": "Capacitor (mobile)",
+  "description": "Android/iOS app. Develop in the browser like the Vite template, then run the build on a phone.",
+  "order": 3,
+  "nextSteps": [
+    "npm install",
+    "npm run file-server   # in one terminal (serves scene files)",
+    "npm run dev           # in another; add ?editor to the URL for the scene editor",
+    "npx cap add android   # once (or ios, which needs macOS + Xcode)",
+    "npm run android       # build and run on a connected phone or emulator"
+  ]
+}
