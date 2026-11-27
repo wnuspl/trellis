@@ -25,7 +25,11 @@ export class TransformProcess extends Process {
             childTransform.position.x * parentTransform.worldScale.x,
             childTransform.position.y * parentTransform.worldScale.y,
         );
-        childTransform.worldPosition = parentTransform.worldPosition.plus(scaledChildPosition);
+        // Scale, then rotate with the parent. Positive rotation is clockwise on screen
+        // (the renderer flips y), which is a negative math angle in y-up world space.
+        childTransform.worldPosition = parentTransform.worldPosition.plus(
+            scaledChildPosition.rotated(-parentTransform.worldRotation)
+        );
         childTransform.worldRotation = parentTransform.worldRotation + childTransform.rotation;
         childTransform.worldScale = new Vector2(
             childTransform.scale.x * parentTransform.worldScale.x,

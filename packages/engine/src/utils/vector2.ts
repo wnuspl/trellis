@@ -47,6 +47,11 @@ export class Vector2 {
     dot(other: Vector2) {
         return this.x*other.x + this.y*other.y;
     }
+    rotated(angle: number) {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return new Vector2(this.x*cos - this.y*sin, this.x*sin + this.y*cos);
+    }
     equals(other: Vector2) {
         return this.x == other.x && this.y == other.y;
     }
