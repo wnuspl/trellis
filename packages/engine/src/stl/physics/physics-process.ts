@@ -7,12 +7,12 @@ import {FrameEventStore} from "../../events.js";
 import {TransformProcess} from "../../core/index.js";
 
 export class PhysicsProcess extends Process {
-    static SUB_STEP_SIZE: number = 0.2;
+    static SUB_STEP_SIZE: number = 0.25;
     #dynamicProcess: DynamicsProcess;
     #collisionProcess: CollisionProcess;
     #resolutionProcess: ResolutionProcess;
     #transformProcess: TransformProcess;
-    #residiualTime: number = 0;
+    #residualTime: number = 0;
     constructor(...args: ConstructorParameters<typeof Process>) {
         super(...args);
         this.#dynamicProcess = new DynamicsProcess(...args);
@@ -28,8 +28,8 @@ export class PhysicsProcess extends Process {
             return `${Math.min(idA,idB)},${Math.max(idA,idB)}`;
         };
         const collisionPairs: Set<string> = new Set();
-        this.#residiualTime += ctx.dt;
-        while (this.#residiualTime > PhysicsProcess.SUB_STEP_SIZE) {
+        this.#residualTime += ctx.dt;
+        while (this.#residualTime >= PhysicsProcess.SUB_STEP_SIZE) {
             const subCtx = {
                 ...ctx,
                 dt: PhysicsProcess.SUB_STEP_SIZE,
@@ -46,7 +46,7 @@ export class PhysicsProcess extends Process {
                 ctx.events.post(collisionEvent);
             }
 
-            this.#residiualTime -= PhysicsProcess.SUB_STEP_SIZE;
+            this.#residualTime -= PhysicsProcess.SUB_STEP_SIZE;
         }
     }
 }
