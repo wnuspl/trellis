@@ -8,3 +8,8 @@ export { WorldGraphics } from "./world-graphics.js";
 import {TextureStyle} from "pixi.js";
 
 TextureStyle.defaultOptions.scaleMode = 'nearest';
+
+
+export { Camera } from "./camera.js";
+
+export { Viewport } from "./viewport.js";

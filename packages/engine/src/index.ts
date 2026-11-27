@@ -11,3 +11,5 @@ export * from "./tracked.js";
 
 
 export * from './core/index.js';
+
+export { DOMInput } from './input/dom-input.js'
